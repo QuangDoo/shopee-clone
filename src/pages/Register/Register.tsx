@@ -1,19 +1,20 @@
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { rules } from 'src/utils';
+import { getRules, Schema, schema } from 'src/utils';
+import { Input } from 'src/component/Input';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-type Input = {
-  email: string;
-  password: string;
-  confirm_password: string;
-};
+type Input = Schema;
 
 const Register = () => {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors }
-  } = useForm<Input>();
+  } = useForm<Input>({
+    resolver: yupResolver(schema)
+  });
 
   const onSubmit = (data: Input) => {
     console.log('data', data.email);
@@ -21,44 +22,40 @@ const Register = () => {
 
   return (
     <div className='bg-primary10'>
-      <div className='mx-auto max-w-7xl px-4'>
+      <div className='container'>
         <div className='grid grid-cols-1 py-10 md:py-14 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
             <form onSubmit={handleSubmit(onSubmit)} noValidate className='rounded bg-white p-10 shadow-sm'>
               <div className='text-2xl'>Đăng ký</div>
-              <div className='mt-3'>
-                <input
-                  {...register('email', rules.email)}
-                  type='email'
-                  className='w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500 focus:shadow-sm'
-                  placeholder='Email'
-                />
-                <div className='mt-1 min-h-[1.25rem] text-sm text-red-600'>{errors.email?.message}</div>
-              </div>
-              <div className='mt-3'>
-                <input
-                  {...register('password', rules.password)}
-                  type='password'
-                  className='w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500 focus:shadow-sm'
-                  placeholder='Password'
-                />
-                <div className='mt-1 min-h-[1rem] text-sm text-red-600'>{errors.password?.message}</div>
-              </div>
-              <div className='mt-3'>
-                <input
-                  {...register('confirm_password', rules.confirm_password)}
-                  type='password'
-                  className='w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500 focus:shadow-sm'
-                  placeholder='Confirm Password'
-                />
-                <div className='mt-1 min-h-[1rem] text-sm text-red-600'>{errors.confirm_password?.message}</div>
-              </div>
+              <Input
+                type='email'
+                placeholder='Email'
+                name='email'
+                register={register}
+                errorMessage={errors?.email?.message}
+              />
+              <Input
+                type='password'
+                placeholder='Password'
+                name='password'
+                register={register}
+                errorMessage={errors?.password?.message}
+                autoComplete='on'
+              />
+              <Input
+                type='password'
+                placeholder='Confirm password'
+                name='confirm_password'
+                autoComplete='on'
+                register={register}
+                errorMessage={errors?.confirm_password?.message}
+              />
+
               <div className='mt-3'>
                 <button className='rouned w-full rounded-sm bg-red-500 py-4 px-2 text-sm uppercase text-white hover:bg-red-600'>
                   Đăng ký
                 </button>
               </div>
-
               <div className='mt-6 flex content-center items-center justify-center'>
                 <div className='mr-2 text-gray-400'>Bạn đã biết đến Shopee fake?</div>
                 <div className='text-primary10 underline-offset-2 opacity-75'>

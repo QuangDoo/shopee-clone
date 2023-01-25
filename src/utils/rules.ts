@@ -1,10 +1,12 @@
-import type { RegisterOptions } from 'react-hook-form';
+import type { FieldValues, RegisterOptions, UseFormGetValues } from 'react-hook-form';
+import * as yup from 'yup';
 
-type Rules = {
+export type Rules = {
   [key in 'email' | 'password' | 'confirm_password']?: RegisterOptions;
 };
 
-export const rules: Rules = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getRules = (getValues?: UseFormGetValues<any>): Rules => ({
   email: {
     required: {
       value: true,
@@ -16,39 +18,66 @@ export const rules: Rules = {
     },
     maxLength: {
       value: 160,
-      message: 'Độ dài từ 5-160 ký tự'
+      message: 'Độ dài từ 5 - 160 ký tự'
     },
     minLength: {
       value: 5,
-      message: 'Độ dài từ 5-160 ký tự'
+      message: 'Độ dài từ 5 - 160 ký tự'
     }
   },
   password: {
     required: {
       value: true,
-      message: 'Mật khẩu là bắt buộc'
+      message: 'Password là bắt buộc'
     },
     maxLength: {
-      value: 12,
-      message: 'Độ dài mật khẩu từ 5-12 ký tự'
+      value: 160,
+      message: 'Độ dài từ 6 - 160 ký tự'
     },
     minLength: {
-      value: 5,
-      message: 'Độ dài mật khẩu từ 5-12 ký tự'
+      value: 6,
+      message: 'Độ dài từ 6 - 160 ký tự'
     }
   },
   confirm_password: {
     required: {
       value: true,
-      message: 'Mật khẩu là bắt buộc'
+      message: 'Nhập lại password là bắt buộc'
     },
     maxLength: {
-      value: 12,
-      message: 'Độ dài mật khẩu từ 5-12 ký tự'
+      value: 160,
+      message: 'Độ dài từ 6 - 160 ký tự'
     },
     minLength: {
-      value: 5,
-      message: 'Độ dài mật khẩu từ 5-12 ký tự'
-    }
+      value: 6,
+      message: 'Độ dài từ 6 - 160 ký tự'
+    },
+    validate:
+      typeof getValues === 'function'
+        ? (value) => value === getValues('password') || 'Nhập lại password không khớp'
+        : undefined
   }
-};
+});
+
+const errorMessageLenght = 'Độ dài từ 5 - 160 ký tự';
+
+export const schema = yup.object({
+  email: yup
+    .string()
+    .required('Email là bắt buộc')
+    .email('Email không đúng định dạng')
+    .min(5, errorMessageLenght)
+    .max(160, errorMessageLenght),
+  password: yup.string().required('Password là bắt buộc').min(6, errorMessageLenght).max(160, errorMessageLenght),
+  confirm_password: yup
+    .string()
+    .required('Password là bắt buộc')
+    .min(6, errorMessageLenght)
+    .max(160, errorMessageLenght)
+    .oneOf([yup.ref('password')], 'Nhập lại password không khớp')
+});
+
+export const loginSchema = schema.omit(['confirm_password']);
+
+export type LoginSchema = yup.InferType<typeof loginSchema>;
+export type Schema = yup.InferType<typeof schema>;
