@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { Input } from 'src/component/Input';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { loginSchema } from 'src/utils';
 
 type Input = {
   email: string;
@@ -11,7 +14,9 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<Input>();
+  } = useForm<Input>({
+    resolver: yupResolver(loginSchema)
+  });
 
   const onSubmit = (data: Input) => {
     console.log('data', data.email);
@@ -19,31 +24,26 @@ const Login = () => {
 
   return (
     <div className='bg-primary10'>
-      <div className='mx-auto max-w-7xl px-4'>
+      <div className='container'>
         <div className='grid grid-cols-1 py-10 md:py-14 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
             <form className='rounded bg-white p-10 shadow-sm' onSubmit={handleSubmit(onSubmit)}>
               <div className='text-2xl'>Đăng nhập</div>
-              <div className='mt-3'>
-                <input
-                  {...register('email')}
-                  type='email'
-                  name='email'
-                  className='w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500 focus:shadow-sm'
-                  placeholder='Email'
-                />
-                <div className='mt-1 min-h-[1rem] text-sm text-red-600'></div>
-              </div>
-              <div className='mt-3'>
-                <input
-                  {...register('password')}
-                  type='password'
-                  name='password'
-                  className='w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500 focus:shadow-sm'
-                  placeholder='Password'
-                />
-                <div className='mt-1 min-h-[1rem] text-sm text-red-600'></div>
-              </div>
+              <Input
+                type='email'
+                name='email'
+                placeholder='Email'
+                errorMessage={errors?.email?.message}
+                register={register}
+              />
+              <Input
+                type='password'
+                name='password'
+                placeholder='Passwrod'
+                errorMessage={errors?.password?.message}
+                register={register}
+              />
+
               <div className='mt-3'>
                 <button
                   type='submit'
