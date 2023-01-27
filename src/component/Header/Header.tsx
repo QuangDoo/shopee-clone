@@ -12,7 +12,6 @@ pt-2 text-white'
       <div className='container'>
         <div className='flex justify-end'>
           <Popover
-            initialOpen
             renderPopover={
               <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
                 <div className='flex flex-col'>
