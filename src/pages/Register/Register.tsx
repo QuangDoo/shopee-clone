@@ -32,7 +32,7 @@ const Register = () => {
       onError: (error) => {
         if (isAxiosUnprocessableEntityError<ResponseApi<Omit<Schema, 'confirm_password'>>>(error)) {
           const formError = error?.response?.data?.data;
-          console.log('formError', formError);
+
           if (formError) {
             Object.keys(formError).map((key) => {
               return setError(key as keyof Omit<Schema, 'confirm_password'>, {
