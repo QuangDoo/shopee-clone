@@ -2,24 +2,49 @@ import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Input } from 'src/component/Input';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { loginSchema } from 'src/utils';
+import { loginSchema, Schema } from 'src/utils';
+import { useMutation } from '@tanstack/react-query';
+import { loginAccount } from 'src/apis';
+import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
 
-type Input = {
-  email: string;
-  password: string;
-};
+type Input = Omit<Schema, 'confirm_password'>;
 
 const Login = () => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors }
   } = useForm<Input>({
     resolver: yupResolver(loginSchema)
   });
 
-  const onSubmit = (data: Input) => {
-    console.log('data', data.email);
+  const { mutate } = useMutation({
+    mutationFn: (payload: Input) => loginAccount(payload)
+  });
+
+  const onSubmit = (payload: Input) => {
+    mutate(payload, {
+      onSuccess: (data) => {
+        console.log('data', data);
+      },
+      onError: (error) => {
+        if (isAxiosUnprocessableEntityError<ResponseApi<Input>>(error)) {
+          const formError = error?.response?.data?.data;
+
+          if (formError) {
+            Object.keys(formError).map((key) => {
+              return setError(key as keyof Input, {
+                message: formError[key as keyof Input],
+                type: 'Server'
+              });
+            });
+          }
+        }
+
+        console.log('error', error);
+      }
+    });
   };
 
   return (
