@@ -23,7 +23,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <QueryClientProvider client={queryClient}>
         <App />
         <ToastContainer />
-        <ReactQueryDevtools initialIsOpen={false} />;
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </BrowserRouter>
   </React.StrictMode>
