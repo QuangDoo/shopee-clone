@@ -1,4 +1,7 @@
 import { http } from 'src/utils';
 
 export const registerAccount = ({ email, password }: AuthVariables) =>
-  http.post<AuthResponse>('/registerr', { email, password });
+  http.post<AuthResponse>('/register', { email, password });
+
+export const loginAccount = ({ email, password }: AuthVariables) =>
+  http.post<AuthResponse>('/login', { email, password });
