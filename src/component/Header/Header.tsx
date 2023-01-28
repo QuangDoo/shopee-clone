@@ -108,7 +108,112 @@ pt-2 text-white'
               </svg>
             </button>
           </form>
-          <div className='col-span-1 flex justify-center'>
+          <Popover
+            className='col-span-1 flex justify-center'
+            renderPopover={
+              <div className='relative max-w-[400px] rounded-sm border border-gray-200 bg-white text-sm shadow-md'>
+                <div className='p-2'>
+                  <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
+                  <div className='mt-4 flex hover:text-primary10'>
+                    <div className='flex-shrink-0'>
+                      <img
+                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
+                        alt='img'
+                        className='h-11 w-11'
+                      />
+                    </div>
+                    <div className='ml-2 flex-grow overflow-hidden'>
+                      <div className='truncate'>
+                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
+                        Full Box Trùm Figure
+                      </div>
+                    </div>
+                    <div className='ml-2 flex-shrink-0'>
+                      <span className='text-primary10'>₫124.000</span>
+                    </div>
+                  </div>
+                  <div className='mt-4 flex'>
+                    <div className='flex-shrink-0'>
+                      <img
+                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
+                        alt='img'
+                        className='h-11 w-11'
+                      />
+                    </div>
+                    <div className='ml-2 flex-grow overflow-hidden'>
+                      <div className='truncate'>
+                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
+                        Full Box Trùm Figure
+                      </div>
+                    </div>
+                    <div className='ml-2 flex-shrink-0'>
+                      <span className='text-primary10'>₫124.000</span>
+                    </div>
+                  </div>
+                  <div className='mt-4 flex'>
+                    <div className='flex-shrink-0'>
+                      <img
+                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
+                        alt='img'
+                        className='h-11 w-11'
+                      />
+                    </div>
+                    <div className='ml-2 flex-grow overflow-hidden'>
+                      <div className='truncate'>
+                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
+                        Full Box Trùm Figure
+                      </div>
+                    </div>
+                    <div className='ml-2 flex-shrink-0'>
+                      <span className='text-primary10'>₫124.000</span>
+                    </div>
+                  </div>
+                  <div className='mt-4 flex'>
+                    <div className='flex-shrink-0'>
+                      <img
+                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
+                        alt='img'
+                        className='h-11 w-11'
+                      />
+                    </div>
+                    <div className='ml-2 flex-grow overflow-hidden'>
+                      <div className='truncate'>
+                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
+                        Full Box Trùm Figure
+                      </div>
+                    </div>
+                    <div className='ml-2 flex-shrink-0'>
+                      <span className='text-primary10'>₫124.000</span>
+                    </div>
+                  </div>
+                  <div className='mt-4 flex'>
+                    <div className='flex-shrink-0'>
+                      <img
+                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
+                        alt='img'
+                        className='h-11 w-11'
+                      />
+                    </div>
+                    <div className='ml-2 flex-grow overflow-hidden'>
+                      <div className='truncate'>
+                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
+                        Full Box Trùm Figure
+                      </div>
+                    </div>
+                    <div className='ml-2 flex-shrink-0'>
+                      <span className='text-primary10'>₫124.000</span>
+                    </div>
+                  </div>
+                  <div className='mt-6 flex items-center justify-between '>
+                    <div className='text-sx capitalize text-gray-500'>Thêm vào giỏ hàng</div>
+                    <button className='rounded bg-primary10 px-4 py-2 font-semibold capitalize text-white'>
+                      Xem Giỏ Hàng
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          >
             <Link to='/cart'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -125,7 +230,7 @@ pt-2 text-white'
                 />
               </svg>
             </Link>
-          </div>
+          </Popover>
         </div>
       </div>
     </div>
