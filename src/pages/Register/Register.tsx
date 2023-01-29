@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerAccount } from 'src/apis';
 import { Button, Input } from 'src/component';
+import { path } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
 import { Schema, schema } from 'src/utils';
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
@@ -34,7 +35,7 @@ const Register = () => {
     mutate(payload, {
       onSuccess: () => {
         setIsAuthenticated(true);
-        navigate('/');
+        navigate(path.home);
       },
       onError: (error) => {
         if (isAxiosUnprocessableEntityError<ResponseApi<Omit<Schema, 'confirm_password'>>>(error)) {

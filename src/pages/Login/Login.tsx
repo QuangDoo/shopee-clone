@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginAccount } from 'src/apis';
 import { Button, Input } from 'src/component';
+import { path } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
 import { loginSchema, Schema } from 'src/utils';
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
@@ -21,7 +22,7 @@ const Login = () => {
     resolver: yupResolver(loginSchema)
   });
 
-  const { setIsAuthenticated } = useContext(AppContext);
+  const { setIsAuthenticated, setProfile } = useContext(AppContext);
 
   const navigate = useNavigate();
 
@@ -31,9 +32,10 @@ const Login = () => {
 
   const onSubmit = (payload: Input) => {
     mutate(payload, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsAuthenticated(true);
-        navigate('/');
+        setProfile(data.data.data?.user);
+        navigate(path.home);
       },
       onError: (error) => {
         if (isAxiosUnprocessableEntityError<ResponseApi<Input>>(error)) {

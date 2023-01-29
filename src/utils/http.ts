@@ -1,9 +1,9 @@
 import axios, { AxiosError, HttpStatusCode } from 'axios';
 import { toast } from 'react-toastify';
-import { clearAccessToken, getAccessTokenFromLS, saveAccessToken } from './auth';
+import { path } from 'src/constants';
+import { clearLocalStorage, getAccessTokenFromLS, setAccessToken, setProfileToLS } from './auth';
 
 let accessToken = getAccessTokenFromLS();
-console.log('accessToken', accessToken);
 
 export const http = axios.create({
   baseURL: 'https://api-ecom.duthanhduoc.com/',
@@ -34,12 +34,13 @@ http.interceptors.response.use(
     // Do something with response data
 
     const { url } = response.config;
-    if (url === '/login' || url === '/register') {
+    if (url === path.login || url === path.register) {
       accessToken = response.data.data.access_token;
-      saveAccessToken(accessToken);
-    } else if (url === '/logout') {
+      setAccessToken(accessToken);
+      setProfileToLS(response.data.data.user);
+    } else if (url === path.logout) {
       accessToken = '';
-      clearAccessToken();
+      clearLocalStorage();
     }
     return response;
   },
