@@ -8,7 +8,7 @@ import { registerAccount } from 'src/apis';
 import { Button, Input } from 'src/component';
 import { path } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
-import { Schema, schema } from 'src/utils';
+import { Schema, schema, setProfileToLS } from 'src/utils';
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
 
 type Input = Schema;
@@ -23,7 +23,7 @@ const Register = () => {
     resolver: yupResolver(schema)
   });
 
-  const { setIsAuthenticated } = useContext(AppContext);
+  const { setIsAuthenticated, setProfile } = useContext(AppContext);
 
   const navigate = useNavigate();
 
@@ -33,8 +33,9 @@ const Register = () => {
     const payload = omit(data, ['confirm_password']);
 
     mutate(payload, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsAuthenticated(true);
+        setProfile(data.data.data?.user);
         navigate(path.home);
       },
       onError: (error) => {
