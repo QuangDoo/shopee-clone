@@ -1,9 +1,26 @@
-import { arrow, offset, shift, useFloating } from '@floating-ui/react';
-import { useRef, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { logout } from 'src/apis';
+import { AppContext } from 'src/contexts/app.context';
+import { clearAccessToken } from 'src/utils';
 import { Popover } from '../Popover';
 
 const Header = () => {
+  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
+
+  const { mutate: logoutMutate } = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      clearAccessToken();
+      setIsAuthenticated(false);
+    }
+  });
+
+  const handleLogout = () => {
+    logoutMutate();
+  };
+
   return (
     <div
       className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5
@@ -48,34 +65,48 @@ pt-2 text-white'
               <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' />
             </svg>
           </Popover>
-
-          <Popover
-            className='flex cursor-pointer py-1 hover:text-gray-300'
-            renderPopover={
-              <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
-                <div className='flex flex-col items-start'>
-                  <Link to='/user' className='py-2 px-3 hover:text-primary10'>
-                    Tài khoản của tôi
-                  </Link>
-                  <Link to='purchases' className='py-2 px-3 hover:text-primary10'>
-                    Đơn mua
-                  </Link>
-                  <button className='py-2 px-3 hover:text-primary10'>Đăng xuất</button>
+          {isAuthenticated && (
+            <Popover
+              className='flex cursor-pointer py-1 hover:text-gray-300'
+              renderPopover={
+                <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
+                  <div className='flex flex-col items-start'>
+                    <Link to='/profile' className='py-2 px-3 hover:text-primary10'>
+                      Tài khoản của tôi
+                    </Link>
+                    <Link to='purchases' className='py-2 px-3 hover:text-primary10'>
+                      Đơn mua
+                    </Link>
+                    <button onClick={handleLogout} className='py-2 px-3 hover:text-primary10'>
+                      Đăng xuất
+                    </button>
+                  </div>
                 </div>
+              }
+            >
+              <div className='flex cursor-pointer items-center py-1 hover:text-gray-300'>
+                <div className='mr-2 h-6 w-6 flex-shrink-0'>
+                  <img
+                    className='h-full w-full rounded-full object-cover'
+                    src='https://cf.shopee.vn/file/ef2f6d59be398920fc2f5b252aa8f7d9_tn'
+                    alt='avatar'
+                  ></img>
+                </div>
+                <div>DoVanQuang</div>
               </div>
-            }
-          >
-            <div className='flex cursor-pointer items-center py-1 hover:text-gray-300'>
-              <div className='mr-2 h-6 w-6 flex-shrink-0'>
-                <img
-                  className='h-full w-full rounded-full object-cover'
-                  src='https://cf.shopee.vn/file/ef2f6d59be398920fc2f5b252aa8f7d9_tn'
-                  alt='avatar'
-                ></img>
-              </div>
-              <div>DoVanQuang</div>
+            </Popover>
+          )}
+          {!isAuthenticated && (
+            <div className='flex items-center'>
+              <Link to='/register' className='mx-3 capitalize hover:text-white hover:opacity-70'>
+                Đăng ký
+              </Link>
+              <div className='h-4 border-r-[1px] border-r-white/40' />
+              <Link to='/login' className='mx-3 capitalize hover:text-white hover:opacity-70'>
+                Đăng nhập
+              </Link>
             </div>
-          </Popover>
+          )}
         </div>
         <div className='mt-4 grid grid-cols-12 items-center gap-4'>
           <Link to='/' className='col-span-2'>

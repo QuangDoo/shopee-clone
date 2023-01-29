@@ -1,10 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import { omit } from 'lodash';
+import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { registerAccount } from 'src/apis';
 import { Input } from 'src/component/Input';
+import { AppContext } from 'src/contexts/app.context';
 import { Schema, schema } from 'src/utils';
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
 
@@ -20,14 +22,19 @@ const Register = () => {
     resolver: yupResolver(schema)
   });
 
+  const { setIsAuthenticated } = useContext(AppContext);
+
+  const navigate = useNavigate();
+
   const { mutate } = useMutation({ mutationFn: (data: AuthVariables) => registerAccount(data) });
 
   const onSubmit = (data: Input) => {
     const payload = omit(data, ['confirm_password']);
 
     mutate(payload, {
-      onSuccess: (data) => {
-        console.log('data', data);
+      onSuccess: () => {
+        setIsAuthenticated(true);
+        navigate('/');
       },
       onError: (error) => {
         if (isAxiosUnprocessableEntityError<ResponseApi<Omit<Schema, 'confirm_password'>>>(error)) {
