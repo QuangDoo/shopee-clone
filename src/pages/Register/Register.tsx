@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerAccount } from 'src/apis';
-import { Input } from 'src/component/Input';
+import { Button, Input } from 'src/component';
 import { AppContext } from 'src/contexts/app.context';
 import { Schema, schema } from 'src/utils';
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
@@ -26,7 +26,7 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const { mutate } = useMutation({ mutationFn: (data: AuthVariables) => registerAccount(data) });
+  const { mutate, isLoading } = useMutation({ mutationFn: (data: AuthVariables) => registerAccount(data) });
 
   const onSubmit = (data: Input) => {
     const payload = omit(data, ['confirm_password']);
@@ -85,9 +85,9 @@ const Register = () => {
               />
 
               <div className='mt-3'>
-                <button className='rouned w-full rounded-sm bg-red-500 py-4 px-2 text-sm uppercase text-white hover:bg-red-600'>
+                <Button isLoading={isLoading} disabled={isLoading}>
                   Đăng ký
-                </button>
+                </Button>
               </div>
               <div className='mt-6 flex content-center items-center justify-center'>
                 <div className='mr-2 text-gray-400'>Bạn đã biết đến Shopee fake?</div>

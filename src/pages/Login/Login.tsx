@@ -1,13 +1,13 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { Input } from 'src/component/Input';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { loginSchema, Schema } from 'src/utils';
 import { useMutation } from '@tanstack/react-query';
-import { loginAccount } from 'src/apis';
-import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
 import { useContext } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginAccount } from 'src/apis';
+import { Button, Input } from 'src/component';
 import { AppContext } from 'src/contexts/app.context';
+import { loginSchema, Schema } from 'src/utils';
+import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
 
 type Input = Omit<Schema, 'confirm_password'>;
 
@@ -25,7 +25,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const { mutate } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: (payload: Input) => loginAccount(payload)
   });
 
@@ -77,12 +77,9 @@ const Login = () => {
               />
 
               <div className='mt-3'>
-                <button
-                  type='submit'
-                  className='rouned w-full rounded-sm bg-red-500 py-4 px-2 text-sm uppercase text-white hover:bg-red-600'
-                >
+                <Button isLoading={isLoading} disabled={isLoading} type='submit'>
                   Đăng nhập
-                </button>
+                </Button>
               </div>
               <div className='mt-6 flex content-center items-center justify-center'>
                 <div className='mr-2 text-gray-400'>Bạn mới biết đến Shopee fake?</div>
