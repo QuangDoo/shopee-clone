@@ -1,4 +1,4 @@
-import { arrow, FloatingPortal, offset, shift, useFloating } from '@floating-ui/react';
+import { arrow, FloatingPortal, offset, type Placement, shift, useFloating } from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ElementType, useRef, useState } from 'react';
 
@@ -8,17 +8,28 @@ type Props = {
   renderPopover: React.ReactNode;
   as?: ElementType;
   initialOpen?: boolean;
+  arrow?: boolean;
+  placement?: Placement;
 };
 
 const Popover = (props: Props) => {
-  const { children, className, renderPopover, as: Element = 'div', initialOpen } = props;
+  const {
+    children,
+    className,
+    renderPopover,
+    as: Element = 'div',
+    initialOpen,
+    arrow: hasArrow = true,
+    placement = 'bottom-end'
+  } = props;
 
   const [showTooltip, setShowTooltip] = useState<boolean>(initialOpen || false);
 
   const arrowRef = useRef<HTMLElement>(null);
 
   const { x, y, strategy, floating, reference, middlewareData } = useFloating({
-    middleware: [offset(6), shift(), arrow({ element: arrowRef })]
+    middleware: [offset(6), shift(), arrow({ element: arrowRef })],
+    placement: placement
   });
 
   const handleShowTooltip = () => setShowTooltip(true);
@@ -44,14 +55,16 @@ const Popover = (props: Props) => {
               exit={{ opacity: 0, transform: 'scale(0)' }}
               transition={{ dution: 0.3 }}
             >
-              <span
-                ref={arrowRef}
-                className='absolute z-10 translate-y-[-95%] border-[11px] border-x-transparent border-t-transparent border-b-white'
-                style={{
-                  left: middlewareData.arrow?.x,
-                  top: middlewareData.arrow?.y
-                }}
-              />
+              {hasArrow && (
+                <span
+                  ref={arrowRef}
+                  className='absolute z-10 translate-y-[-95%] border-[11px] border-x-transparent border-t-transparent border-b-white'
+                  style={{
+                    left: middlewareData.arrow?.x,
+                    top: middlewareData.arrow?.y
+                  }}
+                />
+              )}
 
               {renderPopover}
             </motion.div>
