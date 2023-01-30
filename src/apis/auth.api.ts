@@ -1,9 +1,7 @@
 import { http } from 'src/utils';
 
-export const registerAccount = ({ email, password }: AuthVariables) =>
-  http.post<AuthResponse>('/register', { email, password });
-
-export const loginAccount = ({ email, password }: AuthVariables) =>
-  http.post<AuthResponse>('/login', { email, password });
-
-export const logout = () => http.post('/logout');
+export const authApi = {
+  registerAccount: ({ email, password }: AuthVariables) => http.post<AuthResponse>('/register', { email, password }),
+  loginAccount: ({ email, password }: AuthVariables) => http.post<AuthResponse>('/login', { email, password }),
+  logout: () => http.post('/logout')
+};

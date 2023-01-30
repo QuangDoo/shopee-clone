@@ -5,4 +5,4 @@ export const path = {
   register: '/register',
   logout: '/logout',
   cart: '/cart'
-};
+} as const;
