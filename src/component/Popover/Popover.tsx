@@ -10,6 +10,7 @@ type Props = {
   initialOpen?: boolean;
   arrow?: boolean;
   placement?: Placement;
+  offset?: number;
 };
 
 const Popover = (props: Props) => {
@@ -20,7 +21,8 @@ const Popover = (props: Props) => {
     as: Element = 'div',
     initialOpen,
     arrow: hasArrow = true,
-    placement = 'bottom-end'
+    placement = 'bottom-end',
+    offset: offsetChildren = 6
   } = props;
 
   const [showTooltip, setShowTooltip] = useState<boolean>(initialOpen || false);
@@ -28,7 +30,7 @@ const Popover = (props: Props) => {
   const arrowRef = useRef<HTMLElement>(null);
 
   const { x, y, strategy, floating, reference, middlewareData } = useFloating({
-    middleware: [offset(6), shift(), arrow({ element: arrowRef })],
+    middleware: [offset(offsetChildren), shift(), arrow({ element: arrowRef })],
     placement: placement
   });
 
