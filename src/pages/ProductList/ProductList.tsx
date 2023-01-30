@@ -9,7 +9,7 @@ const ProductList = () => {
     queryKey: ['products', queryParams],
     queryFn: () => productApi.getProductList(queryParams)
   });
-  console.log('data', data);
+
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
