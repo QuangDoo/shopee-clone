@@ -117,7 +117,7 @@ pt-2 text-white'
               </g>
             </svg>
           </Link>
-          <form action='' className='col-span-9 flex rounded-sm bg-white p-1'>
+          <form className='col-span-9 flex rounded-sm bg-white p-1'>
             <input
               type='text'
               className='flex-grow border-none py-1 px-2 text-black outline-none'
