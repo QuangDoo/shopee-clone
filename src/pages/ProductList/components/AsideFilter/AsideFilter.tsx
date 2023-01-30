@@ -1,11 +1,18 @@
-import { Link } from 'react-router-dom';
+import classNames from 'classnames';
+import { createSearchParams, Link } from 'react-router-dom';
 import { Button, Input } from 'src/component';
 import { path } from 'src/constants';
+import { QueryConfig } from '../../ProductList';
 
-const AsideFilter = () => {
+const AsideFilter = ({ categories, queryConfig }: { categories: Category[]; queryConfig: QueryConfig }) => {
   return (
     <div className='py-4'>
-      <Link to={path.home} className='flex items-center font-bold capitalize'>
+      <Link
+        to={path.home}
+        className={classNames('flex items-center font-bold capitalize', {
+          'text-primary10': !queryConfig.category
+        })}
+      >
         <svg viewBox='0 0 12 10' className='mr-2 h-3 w-3 fill-current'>
           <g fillRule='evenodd' stroke='none' strokeWidth='1'>
             <g transform='translate(-373 -208)'>
@@ -23,21 +30,31 @@ const AsideFilter = () => {
       </Link>
       <div className='my-4 h-[1px] bg-gray-300' />
       <ul>
-        <li className='py-2 pl-2'>
-          <Link to={path.home} className='relative px-2 text-sm font-semibold text-primary10 '>
-            <svg viewBox='0 0 4 7' className='absolute top-1 left-[-10px] mr-2 h-2 w-2 fill-primary10'>
-              <polygon points='4 3.5 0 0 0 7'></polygon>
-            </svg>
-            <span>Thời trang nam</span>
-          </Link>
-        </li>
-        <li className='py-2 pl-2'>
-          <Link to={path.home} className='relative  px-2 text-sm'>
-            <span>Điện thoại</span>
-          </Link>
-        </li>
-      </ul>
+        {categories.map((category) => {
+          const isActive = category._id === queryConfig.category;
+          return (
+            <li className='py-2 pl-2' key={category._id}>
+              <Link
+                to={{
+                  pathname: path.home,
+                  search: createSearchParams({ ...queryConfig, category: category._id + '' }).toString()
+                }}
+                className={classNames('relative px-2 text-sm', {
+                  'font-semibold text-primary10': isActive
+                })}
+              >
+                {isActive && (
+                  <svg viewBox='0 0 4 7' className='absolute top-1 left-[-10px] mr-2 h-2 w-2 fill-primary10'>
+                    <polygon points='4 3.5 0 0 0 7'></polygon>
+                  </svg>
+                )}
 
+                <span>{category.name}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
       <Link to={path.home} className='flex items-center font-bold capitalize'>
         <svg
           enableBackground='new 0 0 15 15'
