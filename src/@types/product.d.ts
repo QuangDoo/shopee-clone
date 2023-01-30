@@ -20,7 +20,7 @@ type Product = {
 
 type ProductList = {
   products: Product[];
-  paginate: {
+  pagination: {
     page: number;
     limit: numner;
     page_size: number;
@@ -28,13 +28,13 @@ type ProductList = {
 };
 
 type ProductListParams = {
-  page?: numner;
-  limit?: number;
+  page?: numner | string;
+  limit?: number | string;
   sort_by?: 'createAt' | 'view' | 'sold' | 'price';
   order?: 'asc' | 'desc';
   exclude?: string;
-  rating_filter?: number;
-  price_max?: number;
-  price_min?: number;
-  name?: string;
+  rating_filter?: number | string;
+  price_max?: number | string;
+  price_min?: number | string;
+  name?: string | string;
 };
