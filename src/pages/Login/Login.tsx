@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginAccount } from 'src/apis';
+import { authApi } from 'src/apis';
 import { Button, Input } from 'src/component';
 import { path } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
@@ -27,7 +27,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const { mutate, isLoading } = useMutation({
-    mutationFn: (payload: Input) => loginAccount(payload)
+    mutationFn: (payload: Input) => authApi.loginAccount(payload)
   });
 
   const onSubmit = (payload: Input) => {
