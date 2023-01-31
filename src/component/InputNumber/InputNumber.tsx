@@ -1,44 +1,36 @@
-import { InputHTMLAttributes } from 'react';
+import { forwardRef, InputHTMLAttributes } from 'react';
 import type { RegisterOptions, UseFormRegister } from 'react-hook-form';
 
 type Props = {
   containerClassName?: string;
   inputClassName?: string;
   classNameError?: string;
-  register?: UseFormRegister<any>;
-  rules?: RegisterOptions;
   errorMessage?: string;
-  autoComplete?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-const Input = (props: Props) => {
+const InputNumber = forwardRef<HTMLInputElement, Props>(function InputNumberInner(props: Props, ref) {
   const {
-    type,
-    register,
     containerClassName = 'mt-3',
-    placeholder,
-    name,
-    rules,
     errorMessage,
     inputClassName = 'w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500 focus:shadow-sm',
     classNameError = 'mt-1 min-h-[1.25rem] text-sm text-red-600',
-    autoComplete
+    onChange,
+    ...rest
   } = props;
 
-  const registerResult = register && name ? register(name, rules) : null;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    if ((/^\d+$/.test(value) || value === '') && onChange) {
+      onChange(e);
+    }
+  };
 
   return (
     <div className={containerClassName}>
-      <input
-        {...registerResult}
-        type={type}
-        className={inputClassName}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-      />
+      <input {...rest} className={inputClassName} onChange={handleChange} ref={ref} />
       <div className={classNameError}>{errorMessage}</div>
     </div>
   );
-};
+});
 
-export default Input;
+export default InputNumber;

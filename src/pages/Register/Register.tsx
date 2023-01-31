@@ -4,14 +4,15 @@ import { omit } from 'lodash';
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { registerAccount } from 'src/apis';
+import { authApi } from 'src/apis';
 import { Button, Input } from 'src/component';
 import { path } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
-import { Schema, schema, setProfileToLS } from 'src/utils';
+import { Schema, schema } from 'src/utils';
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
 
-type Input = Schema;
+type Input = Pick<Schema, 'email' | 'password' | 'confirm_password'>;
+const registerSchema = schema.pick(['email', 'password', 'confirm_password']);
 
 const Register = () => {
   const {
@@ -20,14 +21,14 @@ const Register = () => {
     setError,
     formState: { errors }
   } = useForm<Input>({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(registerSchema)
   });
 
   const { setIsAuthenticated, setProfile } = useContext(AppContext);
 
   const navigate = useNavigate();
 
-  const { mutate, isLoading } = useMutation({ mutationFn: (data: AuthVariables) => registerAccount(data) });
+  const { mutate, isLoading } = useMutation({ mutationFn: (data: AuthVariables) => authApi.registerAccount(data) });
 
   const onSubmit = (data: Input) => {
     const payload = omit(data, ['confirm_password']);
@@ -44,7 +45,7 @@ const Register = () => {
 
           if (formError) {
             Object.keys(formError).map((key) => {
-              return setError(key as keyof Omit<Schema, 'confirm_password'>, {
+              return setError(key as keyof Omit<Input, 'confirm_password'>, {
                 message: formError[key as keyof Omit<Schema, 'confirm_password'>],
                 type: 'Server'
               });

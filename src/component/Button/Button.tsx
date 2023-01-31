@@ -13,7 +13,7 @@ const Button = (props: Props) => {
     children,
     ...rest
   } = props;
-  const newClassName = disabled ? className + 'cursor-not-allowed' : className;
+  const newClassName = disabled ? className + 'cursor-not-allowed opacity-70' : className;
 
   return (
     <button className={newClassName} disabled={disabled} {...rest}>

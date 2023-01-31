@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { logout } from 'src/apis';
+import { authApi } from 'src/apis';
 import { path } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
 import { clearLocalStorage } from 'src/utils';
@@ -11,7 +11,7 @@ const Header = () => {
   const { isAuthenticated, setIsAuthenticated, profile } = useContext(AppContext);
 
   const { mutate: logoutMutate } = useMutation({
-    mutationFn: logout,
+    mutationFn: authApi.logout,
     onSuccess: () => {
       clearLocalStorage();
       setIsAuthenticated(false);
@@ -117,7 +117,7 @@ pt-2 text-white'
               </g>
             </svg>
           </Link>
-          <form action='' className='col-span-9 flex rounded-sm bg-white p-1'>
+          <form className='col-span-9 flex rounded-sm bg-white p-1'>
             <input
               type='text'
               className='flex-grow border-none py-1 px-2 text-black outline-none'
