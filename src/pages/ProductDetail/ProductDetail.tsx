@@ -3,13 +3,15 @@ import DOMPurify from 'dompurify';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { productApi } from 'src/apis';
-import { Button, InputNumber, ProductRating } from 'src/component';
+import { Button, InputNumber, ProductRating, QuantityController } from 'src/component';
 import { calculateDiscountPercent, formatCurrency, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils';
 import { Product } from '../ProductList';
 
 const ProductDetail = () => {
   const { nameId } = useParams();
+
   const id = getIdFromNameId(nameId + '');
+
   const { data: productData } = useQuery({
     queryKey: ['product', id],
     queryFn: () => productApi.getProductDetail(id + ''),
@@ -26,6 +28,7 @@ const ProductDetail = () => {
 
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState('');
+  const [buyCount, setBuyCount] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (productData?.data.data && productData.data.data.images.length > 0) {
@@ -42,7 +45,7 @@ const ProductDetail = () => {
     image,
     price_before_discount = 0,
     name,
-    quantity,
+    quantity = 0,
     sold = 0
   } = productData?.data?.data || {};
 
@@ -100,6 +103,10 @@ const ProductDetail = () => {
 
   const handleLeave = () => {
     imageRef.current?.removeAttribute('style');
+  };
+
+  const handleBuyCount = (value: number) => {
+    setBuyCount(value);
   };
 
   return (
@@ -196,18 +203,15 @@ const ProductDetail = () => {
                 </div>
               </div>
               <div className=' mt-6 flex items-center'>
-                <div className='text-md capitalize text-gray-600'>Số lượng</div>
-                <div className='ml-10 flex items-center text-gray-600'>
-                  <Button className='border border-r-0 border-gray-400 py-2 px-3'>-</Button>
-                  <InputNumber
-                    classNameError='hidden'
-                    value={1}
-                    inputClassName='h-8 w-14 border border-gray-400 py-[1.1rem] outline-none text-center'
-                    containerClassName='mt-0'
-                  />
-                  <Button className='border border-l-0 border-gray-400 py-2 px-3'>+</Button>
-                  <div className='ml-2 text-sm font-medium capitalize text-gray-400'>{quantity} sản phẩm có sẵn</div>
-                </div>
+                <div className='text-md mr-2 capitalize text-gray-600'>Số lượng</div>
+                <QuantityController
+                  onDecrease={handleBuyCount}
+                  onIncrease={handleBuyCount}
+                  onTyping={handleBuyCount}
+                  max={quantity}
+                  value={buyCount}
+                />
+                <div className='ml-2 text-sm font-medium capitalize text-gray-400'>{quantity} sản phẩm có sẵn</div>
               </div>
               <div className='mt-8 flex items-center'>
                 <button className='flex items-center rounded border border-red-500 bg-primary10/10 px-3 py-2 capitalize text-red-500'>
