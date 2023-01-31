@@ -18,3 +18,20 @@ export const formatNumberToSocialStyle = (value: number) => {
     .replace('.', ',')
     .toLowerCase();
 };
+
+export const calculateDiscountPercent = (original: number, price_discount: number) => {
+  return Math.round(100 - (price_discount / original) * 100) + '%';
+};
+
+export const removeCharacter = (value: string) =>
+  // eslint-disable-next-line no-useless-escape
+  value.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, '');
+
+export const generateNameId = ({ name, id }: { name: string; id: string }) => {
+  return removeCharacter(name).replace(/\s/g, '-') + `-i,${id}`;
+};
+
+export const getIdFromNameId = (nameId: string) => {
+  const arr = nameId.split('-i,');
+  return arr[arr.length - 1];
+};

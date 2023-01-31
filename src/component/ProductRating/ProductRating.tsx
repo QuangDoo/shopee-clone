@@ -1,4 +1,12 @@
-const ProductRating = ({ rating }: { rating: number }) => {
+const ProductRating = ({
+  rating,
+  activeClassName = 'h-3 w-3 fill-yellow-400 text-yellow-400',
+  inActiveClassName = 'h-3 w-3 fill-current text-gray-300'
+}: {
+  rating: number;
+  activeClassName?: string;
+  inActiveClassName?: string;
+}) => {
   const handleWidth = (order: number) => {
     if (order <= rating) {
       return '100%';
@@ -13,13 +21,7 @@ const ProductRating = ({ rating }: { rating: number }) => {
       {[...Array(5)].map((_, index) => (
         <div className='relative' key={index}>
           <div className='absolute top-0 left-0 h-full overflow-hidden' style={{ width: handleWidth(index + 1) }}>
-            <svg
-              enableBackground='new 0 0 15 15'
-              viewBox='0 0 15 15'
-              x='0'
-              y='0'
-              className='h-3 w-3 fill-yellow-400 text-yellow-400'
-            >
+            <svg enableBackground='new 0 0 15 15' viewBox='0 0 15 15' x='0' y='0' className={activeClassName}>
               <polygon
                 points='7.5 .8 9.7 5.4 14.5 5.9 10.7 9.1 11.8 14.2 7.5 11.6 3.2 14.2 4.3 9.1 .5 5.9 5.3 5.4'
                 strokeLinecap='round'
@@ -28,13 +30,7 @@ const ProductRating = ({ rating }: { rating: number }) => {
               ></polygon>
             </svg>
           </div>
-          <svg
-            enableBackground='new 0 0 15 15'
-            viewBox='0 0 15 15'
-            x='0'
-            y='0'
-            className='h-3 w-3 fill-current text-gray-300'
-          >
+          <svg enableBackground='new 0 0 15 15' viewBox='0 0 15 15' x='0' y='0' className={inActiveClassName}>
             <polygon
               points='7.5 .8 9.7 5.4 14.5 5.9 10.7 9.1 11.8 14.2 7.5 11.6 3.2 14.2 4.3 9.1 .5 5.9 5.3 5.4'
               strokeLinecap='round'
