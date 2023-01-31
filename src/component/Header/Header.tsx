@@ -1,14 +1,29 @@
 import { useMutation } from '@tanstack/react-query';
+import { omit } from 'lodash';
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { createSearchParams, Link, useNavigate } from 'react-router-dom';
 import { authApi } from 'src/apis';
 import { path } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
+import useQueryConfig from 'src/hooks/useQueryConfig';
 import { clearLocalStorage } from 'src/utils';
+import { Button } from '../Button';
+import { Input } from '../Input';
 import { Popover } from '../Popover';
 
 const Header = () => {
   const { isAuthenticated, setIsAuthenticated, profile } = useContext(AppContext);
+
+  const { register, handleSubmit } = useForm<{ name: string }>({
+    defaultValues: {
+      name: ''
+    }
+  });
+
+  const queryConfig = useQueryConfig();
+
+  const navigate = useNavigate();
 
   const { mutate: logoutMutate } = useMutation({
     mutationFn: authApi.logout,
@@ -21,6 +36,24 @@ const Header = () => {
   const handleLogout = () => {
     logoutMutate();
   };
+
+  const onSubmit = handleSubmit((data) => {
+    if (!data.name) {
+      return navigate({
+        pathname: path.home,
+        search: createSearchParams(omit(queryConfig, ['name'])).toString()
+      });
+    }
+
+    const config = queryConfig.order
+      ? omit({ ...queryConfig, name: data.name + '' }, ['order', 'sort_by'])
+      : { ...queryConfig, name: data.name + '' };
+
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(config).toString()
+    });
+  });
 
   return (
     <div
@@ -117,13 +150,17 @@ pt-2 text-white'
               </g>
             </svg>
           </Link>
-          <form className='col-span-9 flex rounded-sm bg-white p-1'>
-            <input
+          <form className='col-span-9 flex rounded-sm bg-white p-1' onSubmit={onSubmit}>
+            <Input
               type='text'
-              className='flex-grow border-none py-1 px-2 text-black outline-none'
               placeholder='NHẮC BẠN CHUẨN BỊ SĂN SALE 2.2'
+              containerClassName='flex-grow py-2 border-none px-2 text-black outline-none'
+              classNameError='hidden'
+              inputClassName='outline-none w-full'
+              register={register}
+              name='name'
             />
-            <button className='flex-shrink-0 rounded-sm bg-primary10 px-5 hover:opacity-90'>
+            <button className='flex-shrink-0 rounded-sm bg-primary10 px-5 hover:opacity-90' type='submit'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
