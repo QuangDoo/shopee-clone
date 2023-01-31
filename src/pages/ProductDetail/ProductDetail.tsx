@@ -1,14 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
-import { productApi } from 'src/apis';
+import { toast } from 'react-toastify';
+import { productApi, purchaseApi } from 'src/apis';
 import { Button, InputNumber, ProductRating, QuantityController } from 'src/component';
+import { PurchasesStatus } from 'src/constants';
 import { calculateDiscountPercent, formatCurrency, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils';
 import { Product } from '../ProductList';
 
 const ProductDetail = () => {
   const { nameId } = useParams();
+
+  const queryClient = useQueryClient();
 
   const id = getIdFromNameId(nameId + '');
 
@@ -26,9 +30,18 @@ const ProductDetail = () => {
     staleTime: 3 * 60 * 1000
   });
 
+  const { mutate } = useMutation(purchaseApi.addToCart, {
+    onSuccess: () => {
+      toast.success('Thêm vào giỏ hàng thành công');
+      queryClient.invalidateQueries({ queryKey: ['purchases', { status: PurchasesStatus.inCart }] });
+    }
+  });
+
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState('');
-  const [buyCount, setBuyCount] = useState<number | undefined>(undefined);
+  const [buyCount, setBuyCount] = useState<number>(1);
+
+  const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     if (productData?.data.data && productData.data.data.images.length > 0) {
@@ -52,8 +65,6 @@ const ProductDetail = () => {
   const currentImages = useMemo(() => {
     return images?.slice(...currentIndexImages);
   }, [images, currentIndexImages]);
-
-  const imageRef = useRef<HTMLImageElement>(null);
 
   const chooseActive = (img: string) => () => {
     setActiveImage(img);
@@ -107,6 +118,10 @@ const ProductDetail = () => {
 
   const handleBuyCount = (value: number) => {
     setBuyCount(value);
+  };
+
+  const handleAddToCart = () => {
+    mutate({ buy_count: buyCount, product_id: id });
   };
 
   return (
@@ -214,14 +229,17 @@ const ProductDetail = () => {
                 <div className='ml-2 text-sm font-medium capitalize text-gray-400'>{quantity} sản phẩm có sẵn</div>
               </div>
               <div className='mt-8 flex items-center'>
-                <button className='flex items-center rounded border border-red-500 bg-primary10/10 px-3 py-2 capitalize text-red-500'>
+                <button
+                  onClick={handleAddToCart}
+                  className='flex items-center rounded border border-red-500 bg-primary10/10 px-3 py-2 capitalize text-red-500'
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
                     viewBox='0 0 24 24'
                     strokeWidth='1.5'
                     stroke='currentColor'
-                    className='h-6 w-6'
+                    className='mr-2 h-6 w-6'
                   >
                     <path
                       strokeLinecap='round'
@@ -231,7 +249,7 @@ const ProductDetail = () => {
                   </svg>
                   <div>Thêm vào giỏ hàng</div>
                 </button>
-                <button className='ml-6 rounded bg-red-500 px-3 py-3 capitalize text-white'>
+                <button className='ml-2 rounded bg-red-500 px-3 py-3 capitalize text-white'>
                   <div>Mua ngay</div>
                 </button>
               </div>
