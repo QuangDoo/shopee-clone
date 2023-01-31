@@ -11,7 +11,8 @@ import { AppContext } from 'src/contexts/app.context';
 import { Schema, schema } from 'src/utils';
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
 
-type Input = Schema;
+type Input = Pick<Schema, 'email' | 'password' | 'confirm_password'>;
+const registerSchema = schema.pick(['email', 'password', 'confirm_password']);
 
 const Register = () => {
   const {
@@ -20,7 +21,7 @@ const Register = () => {
     setError,
     formState: { errors }
   } = useForm<Input>({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(registerSchema)
   });
 
   const { setIsAuthenticated, setProfile } = useContext(AppContext);
@@ -44,7 +45,7 @@ const Register = () => {
 
           if (formError) {
             Object.keys(formError).map((key) => {
-              return setError(key as keyof Omit<Schema, 'confirm_password'>, {
+              return setError(key as keyof Omit<Input, 'confirm_password'>, {
                 message: formError[key as keyof Omit<Schema, 'confirm_password'>],
                 type: 'Server'
               });

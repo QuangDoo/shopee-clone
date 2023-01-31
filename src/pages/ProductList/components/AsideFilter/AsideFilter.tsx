@@ -1,10 +1,46 @@
 import classNames from 'classnames';
-import { createSearchParams, Link } from 'react-router-dom';
-import { Button, Input } from 'src/component';
+import { Controller, useForm } from 'react-hook-form';
+import { createSearchParams, Link, useNavigate } from 'react-router-dom';
+import { Button, Input, InputNumber } from 'src/component';
 import { path } from 'src/constants';
 import { QueryConfig } from '../../ProductList';
+import { Schema, schema } from 'src/utils';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+/**
+ * Rule validate price range
+ * Nếu có price min và price max
+ * thì giá price max >= price min
+ * còn không thì có price min thì không có price max và ngược lại
+ */
+
+type FormData = NoUndefinedField<Pick<Schema, 'price_max' | 'price_min'>>;
+
+const priceSchema = schema.pick(['price_min', 'price_max']);
 
 const AsideFilter = ({ categories, queryConfig }: { categories: Category[]; queryConfig: QueryConfig }) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    trigger
+  } = useForm<FormData>({
+    defaultValues: {
+      price_min: '',
+      price_max: ''
+    },
+    resolver: yupResolver(priceSchema),
+    shouldFocusError: false
+  });
+
+  const navigate = useNavigate();
+
+  const onSubmit = handleSubmit((data) => {
+    navigate({
+      pathname: path.home,
+      search: createSearchParams({ ...queryConfig, price_min: data.price_min, price_max: data.price_max }).toString()
+    });
+  });
   return (
     <div className='py-4'>
       <Link
@@ -78,25 +114,54 @@ const AsideFilter = ({ categories, queryConfig }: { categories: Category[]; quer
       <div className='my-4 h-[1px] bg-gray-300' />
       <div className='my-5'>
         <div>Khoảng giá</div>
-        <form className='mt-2'>
+        <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
-            <Input
-              placeholder='₫ Từ'
-              type='text'
-              name='from'
-              containerClassName='grow'
-              inputClassName='w-full rounded-sm border border-gray-300 p-1 outline-none focus:border-gray-500 focus:shadow-sm'
+            <Controller
+              control={control}
+              name='price_min'
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <InputNumber
+                  placeholder='₫ Từ'
+                  type='text'
+                  name='from'
+                  containerClassName='grow'
+                  classNameError='hidden'
+                  inputClassName='w-full rounded-sm border border-gray-300 p-1 outline-none focus:border-gray-500 focus:shadow-sm'
+                  onChange={(event) => {
+                    onChange(event);
+                    trigger('price_max');
+                  }}
+                  onBlur={onBlur}
+                  value={value}
+                  ref={ref}
+                />
+              )}
             />
-            <div className='mx-2 mt-1 h-[1px] shrink-0 text-gray-400'>-</div>
 
-            <Input
-              type='text'
-              placeholder='₫ Đến'
-              name='to'
-              containerClassName='grow'
-              inputClassName='w-full rounded-sm border border-gray-300 p-1 outline-none focus:border-gray-500 focus:shadow-sm'
+            <div className='mx-2 mt-1 h-[1px] shrink-0 text-gray-400'>-</div>
+            <Controller
+              control={control}
+              name='price_max'
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <InputNumber
+                  type='text'
+                  placeholder='₫ Đến'
+                  name='to'
+                  classNameError='hidden'
+                  containerClassName='grow'
+                  inputClassName='w-full rounded-sm border border-gray-300 p-1 outline-none focus:border-gray-500 focus:shadow-sm'
+                  onChange={(event) => {
+                    onChange(event);
+                    trigger('price_min');
+                  }}
+                  onBlur={onBlur}
+                  value={value}
+                  ref={ref}
+                />
+              )}
             />
           </div>
+          <div className='mt-1 min-h-[1.25rem] text-sm text-red-600'>{errors.price_max?.message}</div>
           <div className='flex'>
             <Button className='grow bg-primary10 p-2 text-center text-sm uppercase text-white hover:bg-orange-600'>
               Áp dụng
