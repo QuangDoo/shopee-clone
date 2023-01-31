@@ -1,14 +1,16 @@
 import { forwardRef, InputHTMLAttributes } from 'react';
-import type { RegisterOptions, UseFormRegister } from 'react-hook-form';
 
-type Props = {
+export type InputNumberProps = {
   containerClassName?: string;
   inputClassName?: string;
   classNameError?: string;
   errorMessage?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-const InputNumber = forwardRef<HTMLInputElement, Props>(function InputNumberInner(props: Props, ref) {
+const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumberInner(
+  props: InputNumberProps,
+  ref
+) {
   const {
     containerClassName = 'mt-3',
     errorMessage,

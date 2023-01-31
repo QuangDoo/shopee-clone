@@ -8,3 +8,4 @@ export * from './Pagination';
 export * from './ProductRating';
 export * from './InputNumber';
 export * from './RatingStar';
+export * from './QuantityController';

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Navigate, Outlet, useRoutes } from 'react-router-dom';
-import { Profile, Login, ProductList, Register } from 'src/pages';
+import { Profile, Login, ProductList, Register, ProductDetail } from 'src/pages';
 import { AppContext } from 'src/contexts/app.context';
 import { MainLayout, RegisterLayout } from 'src/layouts';
 import { path } from 'src/constants';
@@ -66,6 +66,15 @@ export const useRouteElements = () => {
       element: (
         <MainLayout>
           <ProductList />
+        </MainLayout>
+      )
+    },
+    {
+      path: path.productDetail,
+      index: true,
+      element: (
+        <MainLayout>
+          <ProductDetail />
         </MainLayout>
       )
     }

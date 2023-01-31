@@ -1,14 +1,30 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { omit } from 'lodash';
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { authApi } from 'src/apis';
-import { path } from 'src/constants';
+import { useForm } from 'react-hook-form';
+import { createSearchParams, Link, useNavigate } from 'react-router-dom';
+import { authApi, purchaseApi } from 'src/apis';
+import { path, PurchasesStatus } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
-import { clearLocalStorage } from 'src/utils';
+import useQueryConfig from 'src/hooks/useQueryConfig';
+import { clearLocalStorage, formatCurrency } from 'src/utils';
+import { Input } from '../Input';
 import { Popover } from '../Popover';
+
+const MAX_PURCHASE = 5;
 
 const Header = () => {
   const { isAuthenticated, setIsAuthenticated, profile } = useContext(AppContext);
+
+  const { register, handleSubmit } = useForm<{ name: string }>({
+    defaultValues: {
+      name: ''
+    }
+  });
+
+  const queryConfig = useQueryConfig();
+
+  const navigate = useNavigate();
 
   const { mutate: logoutMutate } = useMutation({
     mutationFn: authApi.logout,
@@ -18,9 +34,34 @@ const Header = () => {
     }
   });
 
+  const { data: purchaseInCartData } = useQuery({
+    queryKey: ['purchases', { status: PurchasesStatus.inCart }],
+    queryFn: () => purchaseApi.getPurchases({ status: PurchasesStatus.inCart })
+  });
+
+  const purchasesData = purchaseInCartData?.data?.data;
+
   const handleLogout = () => {
     logoutMutate();
   };
+
+  const onSubmit = handleSubmit((data) => {
+    if (!data.name) {
+      return navigate({
+        pathname: path.home,
+        search: createSearchParams(omit(queryConfig, ['name'])).toString()
+      });
+    }
+
+    const config = queryConfig.order
+      ? omit({ ...queryConfig, name: data.name + '' }, ['order', 'sort_by'])
+      : { ...queryConfig, name: data.name + '' };
+
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(config).toString()
+    });
+  });
 
   return (
     <div
@@ -117,13 +158,17 @@ pt-2 text-white'
               </g>
             </svg>
           </Link>
-          <form className='col-span-9 flex rounded-sm bg-white p-1'>
-            <input
+          <form className='col-span-9 flex rounded-sm bg-white p-1' onSubmit={onSubmit}>
+            <Input
               type='text'
-              className='flex-grow border-none py-1 px-2 text-black outline-none'
               placeholder='NHẮC BẠN CHUẨN BỊ SĂN SALE 2.2'
+              containerClassName='flex-grow py-2 border-none px-2 text-black outline-none'
+              classNameError='hidden'
+              inputClassName='outline-none w-full'
+              register={register}
+              name='name'
             />
-            <button className='flex-shrink-0 rounded-sm bg-primary10 px-5 hover:opacity-90'>
+            <button className='flex-shrink-0 rounded-sm bg-primary10 px-5 hover:opacity-90' type='submit'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
@@ -145,99 +190,32 @@ pt-2 text-white'
             renderPopover={
               <div className='relative max-w-[400px] rounded-sm border border-gray-200 bg-white text-sm shadow-md'>
                 <div className='p-2'>
-                  <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
-                  <div className='mt-4 flex hover:text-primary10'>
-                    <div className='flex-shrink-0'>
-                      <img
-                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
-                        alt='img'
-                        className='h-11 w-11'
-                      />
-                    </div>
-                    <div className='ml-2 flex-grow overflow-hidden'>
-                      <div className='truncate'>
-                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
-                        Full Box Trùm Figure
-                      </div>
-                    </div>
-                    <div className='ml-2 flex-shrink-0'>
-                      <span className='text-primary10'>₫124.000</span>
-                    </div>
-                  </div>
-                  <div className='mt-4 flex'>
-                    <div className='flex-shrink-0'>
-                      <img
-                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
-                        alt='img'
-                        className='h-11 w-11'
-                      />
-                    </div>
-                    <div className='ml-2 flex-grow overflow-hidden'>
-                      <div className='truncate'>
-                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
-                        Full Box Trùm Figure
-                      </div>
-                    </div>
-                    <div className='ml-2 flex-shrink-0'>
-                      <span className='text-primary10'>₫124.000</span>
-                    </div>
-                  </div>
-                  <div className='mt-4 flex'>
-                    <div className='flex-shrink-0'>
-                      <img
-                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
-                        alt='img'
-                        className='h-11 w-11'
-                      />
-                    </div>
-                    <div className='ml-2 flex-grow overflow-hidden'>
-                      <div className='truncate'>
-                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
-                        Full Box Trùm Figure
-                      </div>
-                    </div>
-                    <div className='ml-2 flex-shrink-0'>
-                      <span className='text-primary10'>₫124.000</span>
-                    </div>
-                  </div>
-                  <div className='mt-4 flex'>
-                    <div className='flex-shrink-0'>
-                      <img
-                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
-                        alt='img'
-                        className='h-11 w-11'
-                      />
-                    </div>
-                    <div className='ml-2 flex-grow overflow-hidden'>
-                      <div className='truncate'>
-                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
-                        Full Box Trùm Figure
-                      </div>
-                    </div>
-                    <div className='ml-2 flex-shrink-0'>
-                      <span className='text-primary10'>₫124.000</span>
-                    </div>
-                  </div>
-                  <div className='mt-4 flex'>
-                    <div className='flex-shrink-0'>
-                      <img
-                        src='https://preview.redd.it/dlzkjtixenn91.jpg?width=960&crop=smart&auto=webp&v=enabled&s=093fe3d0c5f055cfcae96863674d04b89b5803c8'
-                        alt='img'
-                        className='h-11 w-11'
-                      />
-                    </div>
-                    <div className='ml-2 flex-grow overflow-hidden'>
-                      <div className='truncate'>
-                        Mô Hình, Figure One Piece Tứ Hoàng Luffy Gear 5 Nika Gomu Gomu Nomi Anime, Manga Vua Hải Tặc -
-                        Full Box Trùm Figure
-                      </div>
-                    </div>
-                    <div className='ml-2 flex-shrink-0'>
-                      <span className='text-primary10'>₫124.000</span>
-                    </div>
-                  </div>
+                  {purchasesData ? (
+                    <>
+                      <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
+                      {purchasesData.slice(0, 5).map((purchase) => (
+                        <div className='mt-4 flex p-2 hover:bg-gray-100' key={purchase._id}>
+                          <div className='flex-shrink-0'>
+                            <img src={purchase.product.image} alt={purchase.product.image} className='h-11 w-11' />
+                          </div>
+                          <div className='ml-2 flex-grow overflow-hidden'>
+                            <div className='truncate'>{purchase.product.name}</div>
+                          </div>
+                          <div className='ml-2 flex-shrink-0'>
+                            <span className='text-primary10'>₫{formatCurrency(purchase.product.price)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <div>Chưa có sản phẩm nào trong giỏ hàng</div>
+                  )}
+
                   <div className='mt-6 flex items-center justify-between '>
-                    <div className='text-sx capitalize text-gray-500'>Thêm vào giỏ hàng</div>
+                    <div className='text-sx capitalize text-gray-500'>
+                      {purchasesData && purchasesData?.length > MAX_PURCHASE && purchasesData?.length - MAX_PURCHASE}{' '}
+                      Thêm vào giỏ hàng
+                    </div>
                     <button className='rounded bg-primary10 px-4 py-2 font-semibold capitalize text-white'>
                       Xem Giỏ Hàng
                     </button>
@@ -246,7 +224,7 @@ pt-2 text-white'
               </div>
             }
           >
-            <Link to={path.cart}>
+            <Link to={path.cart} className='relative'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
@@ -261,6 +239,9 @@ pt-2 text-white'
                   d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
                 />
               </svg>
+              <div className='absolute top-0 right-[-10px] -translate-y-2 rounded-full bg-white px-[9px] py-[1px] text-xs text-primary10'>
+                {purchasesData?.length}
+              </div>
             </Link>
           </Popover>
         </div>
