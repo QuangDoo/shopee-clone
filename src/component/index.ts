@@ -7,3 +7,4 @@ export * from './Input';
 export * from './Pagination';
 export * from './ProductRating';
 export * from './InputNumber';
+export * from './RatingStar';
