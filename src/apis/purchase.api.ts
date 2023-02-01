@@ -2,7 +2,7 @@ import { http } from 'src/utils';
 
 const URL = '/purchases';
 
-type PurchaseVars = { product_id: string; buy_count: number };
+export type PurchaseVars = { product_id: string; buy_count: number };
 
 export const purchaseApi = {
   getPurchases: (params: { status: PurchaseListStatus }) =>

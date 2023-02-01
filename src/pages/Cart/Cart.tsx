@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { debounce } from 'lodash';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { purchaseApi } from 'src/apis';
+import { purchaseApi, PurchaseVars } from 'src/apis';
 import { Button, QuantityController } from 'src/component';
 import { path, PurchasesStatus } from 'src/constants';
 import { formatCurrency, generateNameId } from 'src/utils';
@@ -9,9 +10,25 @@ import { formatCurrency, generateNameId } from 'src/utils';
 const Cart = () => {
   const [purchasesId, setPurchasesId] = useState<string[]>([]);
 
+  const queryClient = useQueryClient();
+
   const { data: purchaseInCartData } = useQuery({
     queryKey: ['purchases', { status: PurchasesStatus.inCart }],
     queryFn: () => purchaseApi.getPurchases({ status: PurchasesStatus.inCart })
+  });
+
+  const { mutate: updatePurchasesIncartMudate } = useMutation({
+    mutationFn: (payload: PurchaseVars) => purchaseApi.updatePurchasesInCart(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['purchases', { status: PurchasesStatus.inCart }] });
+    }
+  });
+
+  const { mutate: deletePurchase } = useMutation({
+    mutationFn: () => purchaseApi.deletePurchaseInCart(purchasesId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['purchases', { status: PurchasesStatus.inCart }] });
+    }
   });
 
   const purchaseInCart = purchaseInCartData?.data?.data || [];
@@ -31,8 +48,21 @@ const Cart = () => {
       return setPurchasesId([]);
     }
 
-    return setPurchasesId(purchaseInCart?.map((purchase) => purchase._id));
+    return setPurchasesId(purchaseInCart?.map((purchase) => purchase.product._id));
   };
+
+  const handleQuantity = (purchase: Purchase) => (value: number) => {
+    if (value < 1) {
+      return;
+    }
+
+    updatePurchasesIncartMudate({ product_id: purchase.product._id, buy_count: value });
+  };
+
+  const handleTypeQuantity = (purchase: Purchase) =>
+    debounce((value: number) => {
+      updatePurchasesIncartMudate({ product_id: purchase.product._id, buy_count: value });
+    }, 200);
 
   return (
     <div className=' bg-neutral-100 py-16'>
@@ -54,7 +84,7 @@ const Cart = () => {
             </div>
             <div className=''>
               {purchaseInCart?.map((purchase) => {
-                const isSeleted = purchasesId.includes(purchase._id);
+                const isSeleted = purchasesId.includes(purchase.product._id);
 
                 return (
                   <div
@@ -67,7 +97,7 @@ const Cart = () => {
                           <input
                             type='checkbox'
                             className='h-5 w-5 accent-primary10'
-                            onChange={handleSelectProduct(purchase._id)}
+                            onChange={handleSelectProduct(purchase.product._id)}
                             checked={isSeleted}
                           />
                         </div>
@@ -104,19 +134,23 @@ const Cart = () => {
                             <div className='text-center text-xs text-gray-500 line-through'>
                               {formatCurrency(purchase.product.price_before_discount)}
                             </div>
-                            <div className='text-sm text-black'>
-                              {formatCurrency(purchase.product.price_before_discount)}
-                            </div>
+                            <div className='text-sm text-black'>{formatCurrency(purchase.product.price)}</div>
                           </div>
                         </div>
                         <div className='col-span-1'>
                           <div className='flex flex-shrink-0 items-center justify-center pr-3'>
-                            <QuantityController />
+                            <QuantityController
+                              max={purchase.product.quantity}
+                              value={purchase.buy_count}
+                              onIncrease={handleQuantity(purchase)}
+                              onDecrease={handleQuantity(purchase)}
+                              onTyping={handleTypeQuantity(purchase)}
+                            />
                           </div>
                         </div>
                         <div className='col-span-1 text-sm text-primary10'>
                           <div className='flex flex-shrink-0 items-center justify-center'>
-                            {formatCurrency(purchase.product.price + purchase.buy_count)}
+                            {formatCurrency(purchase.product.price * purchase.buy_count)}
                           </div>
                         </div>
                         <Button className='col-span-1 text-sm text-gray-500 hover:text-primary10'>Xóa</Button>
