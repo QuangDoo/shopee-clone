@@ -8,13 +8,16 @@ type Props = {
   onIncrease?: (value: number) => void;
   onDecrease?: (value: number) => void;
   onTyping?: (value: number) => void;
+  onFocusOut?: (value: number) => void;
   classNameWrapper?: string;
 } & InputNumberProps;
 
 const QuantityController = (props: Props) => {
-  const { max, onIncrease, onDecrease, onTyping, classNameWrapper = 'ml-10', value, ...rest } = props;
+  const { max, onIncrease, onDecrease, onTyping, classNameWrapper = 'ml-10', value, onFocusOut, ...rest } = props;
 
   const [localValue, setLocalValue] = useState<number>(Number(value) || 0);
+
+  console.log('localValue', localValue);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let _value = Number(e.target.value);
@@ -43,11 +46,15 @@ const QuantityController = (props: Props) => {
     let _value = localValue - 1;
 
     if (_value <= 0) {
-      _value = 1;
+      _value = 0;
     }
 
     onDecrease?.(_value);
     setLocalValue(_value);
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
+    onFocusOut?.(Number(e.target.value));
   };
 
   return (
@@ -61,6 +68,7 @@ const QuantityController = (props: Props) => {
         inputClassName='h-8 w-14 border border-gray-400 py-[1.1rem] outline-none text-center'
         containerClassName='mt-0'
         onChange={handleChange}
+        onBlur={handleBlur}
         {...rest}
       />
       <Button className='border border-l-0 border-gray-400 py-2 px-3' onClick={handeIncrease}>
