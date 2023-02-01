@@ -17,8 +17,6 @@ const QuantityController = (props: Props) => {
 
   const [localValue, setLocalValue] = useState<number>(Number(value) || 0);
 
-  console.log('localValue', localValue);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let _value = Number(e.target.value);
     if (max && _value > max) {
