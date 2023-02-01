@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { omit } from 'lodash';
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,6 +16,8 @@ const MAX_PURCHASE = 5;
 const Header = () => {
   const { isAuthenticated, setIsAuthenticated, profile } = useContext(AppContext);
 
+  const queryClient = useQueryClient();
+
   const { register, handleSubmit } = useForm<{ name: string }>({
     defaultValues: {
       name: ''
@@ -31,12 +33,14 @@ const Header = () => {
     onSuccess: () => {
       clearLocalStorage();
       setIsAuthenticated(false);
+      queryClient.removeQueries({ queryKey: ['purchases', { status: PurchasesStatus.inCart }] });
     }
   });
 
   const { data: purchaseInCartData } = useQuery({
     queryKey: ['purchases', { status: PurchasesStatus.inCart }],
-    queryFn: () => purchaseApi.getPurchases({ status: PurchasesStatus.inCart })
+    queryFn: () => purchaseApi.getPurchases({ status: PurchasesStatus.inCart }),
+    enabled: isAuthenticated
   });
 
   const purchasesData = purchaseInCartData?.data?.data;
@@ -187,6 +191,7 @@ pt-2 text-white'
           </form>
           <Popover
             className='col-span-1 flex justify-center'
+            disable={!isAuthenticated}
             renderPopover={
               <div className='relative max-w-[400px] rounded-sm border border-gray-200 bg-white text-sm shadow-md'>
                 <div className='p-2'>
@@ -216,9 +221,9 @@ pt-2 text-white'
                       {purchasesData && purchasesData?.length > MAX_PURCHASE && purchasesData?.length - MAX_PURCHASE}{' '}
                       Thêm vào giỏ hàng
                     </div>
-                    <button className='rounded bg-primary10 px-4 py-2 font-semibold capitalize text-white'>
+                    <Link to={path.cart} className='rounded bg-primary10 px-4 py-2 font-semibold capitalize text-white'>
                       Xem Giỏ Hàng
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -239,9 +244,11 @@ pt-2 text-white'
                   d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
                 />
               </svg>
-              <div className='absolute top-0 right-[-10px] -translate-y-2 rounded-full bg-white px-[9px] py-[1px] text-xs text-primary10'>
-                {purchasesData?.length}
-              </div>
+              {isAuthenticated && (
+                <div className='absolute top-0 right-[-10px] -translate-y-2 rounded-full bg-white px-[9px] py-[1px] text-xs text-primary10'>
+                  {purchasesData?.length}
+                </div>
+              )}
             </Link>
           </Popover>
         </div>
