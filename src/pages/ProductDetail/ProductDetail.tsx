@@ -216,8 +216,8 @@ const ProductDetail = () => {
                 </div>
               </div>
               <div className='mt-6 flex items-center bg-gray-50 px-5 py-4'>
-                <div className='text-sm text-gray-500 line-through'>₫{formatCurrency(price_before_discount)}</div>
-                <div className='ml-2 text-xl font-medium text-primary10'>₫{formatCurrency(price)}</div>
+                <div className='text-sm text-gray-500 line-through'>{formatCurrency(price_before_discount)}</div>
+                <div className='ml-2 text-xl font-medium text-primary10'>{formatCurrency(price)}</div>
                 <div className='ml-2 rounded-sm bg-primary10 p-1 text-sm font-semibold uppercase text-white'>
                   {calculateDiscountPercent(price_before_discount, price)} giảm
                 </div>

@@ -207,7 +207,7 @@ pt-2 text-white'
                             <div className='truncate'>{purchase.product.name}</div>
                           </div>
                           <div className='ml-2 flex-shrink-0'>
-                            <span className='text-primary10'>₫{formatCurrency(purchase.product.price)}</span>
+                            <span className='text-primary10'>{formatCurrency(purchase.product.price)}</span>
                           </div>
                         </div>
                       ))}
