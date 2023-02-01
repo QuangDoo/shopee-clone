@@ -20,12 +20,10 @@ const Product = (props: Props) => {
           <div className='min-h-[2rem] text-xs line-clamp-2'>{name}</div>
           <div className='mt-3 flex items-center'>
             <div className='max-w-[50%] truncate text-sm text-gray-500 line-through'>
-              <span className='text-xs'>₫</span>
               <span className='text-xs'>{formatCurrency(price_before_discount)}</span>
             </div>
 
             <div className='ml-1 truncate text-primary10'>
-              <span className='text-sm'>₫</span>
               <span className='text-sm'>{formatCurrency(price)}</span>
             </div>
           </div>
