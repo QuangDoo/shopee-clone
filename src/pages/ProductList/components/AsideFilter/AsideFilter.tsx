@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { omit } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { createSearchParams, Link, useNavigate } from 'react-router-dom';
-import { Button, InputNumber, RatingStar } from 'src/component';
+import { Button, InputNumber, InputV2, RatingStar } from 'src/component';
 import { path } from 'src/constants';
 import { Schema, schema } from 'src/utils';
 import { QueryConfig } from '../../ProductList';
@@ -127,26 +127,18 @@ const AsideFilter = ({ categories, queryConfig }: { categories: Category[]; quer
         <div>Khoảng giá</div>
         <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
-            <Controller
+            {/* sử dụng useControl */}
+            <InputV2
               control={control}
               name='price_min'
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <InputNumber
-                  placeholder='₫ Từ'
-                  type='text'
-                  name='from'
-                  containerClassName='grow'
-                  classNameError='hidden'
-                  inputClassName='w-full rounded-sm border border-gray-300 p-1 outline-none focus:border-gray-500 focus:shadow-sm'
-                  onChange={(event) => {
-                    onChange(event);
-                    trigger('price_max');
-                  }}
-                  onBlur={onBlur}
-                  value={value}
-                  ref={ref}
-                />
-              )}
+              placeholder='₫ Từ'
+              type='number'
+              containerClassName='grow'
+              classNameError='hidden'
+              inputClassName='w-full rounded-sm border border-gray-300 p-1 outline-none focus:border-gray-500 focus:shadow-sm'
+              onChange={(event) => {
+                trigger('price_max');
+              }}
             />
 
             <div className='mx-2 mt-1 h-[1px] shrink-0 text-gray-400'>-</div>
