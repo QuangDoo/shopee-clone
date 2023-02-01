@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { productApi, purchaseApi } from 'src/apis';
-import { Button, InputNumber, ProductRating, QuantityController } from 'src/component';
+import { ProductRating, QuantityController } from 'src/component';
 import { PurchasesStatus } from 'src/constants';
 import { calculateDiscountPercent, formatCurrency, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils';
 import { Product } from '../ProductList';
@@ -53,7 +53,6 @@ const ProductDetail = () => {
     images = [],
     price = 0,
     rating = 0,
-    category,
     description = '',
     image,
     price_before_discount = 0,
@@ -79,9 +78,10 @@ const ProductDetail = () => {
   };
 
   const handlePrevious = () => {
-    if (currentIndexImages[0] > 0) {
-      setCurrentIndexImages((prev) => [prev[0] - 1, prev[1] - 1]);
+    if (currentIndexImages[0] === 0) {
+      return;
     }
+    setCurrentIndexImages((prev) => [prev[0] - 1, prev[1] - 1]);
   };
 
   const handleZoom = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -143,21 +143,24 @@ const ProductDetail = () => {
                 />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
-                <button
-                  className='w-10/2 absolute left-0 top-1/2 z-10 h-9 -translate-y-1/2 bg-black/20 text-white'
-                  onClick={handlePrevious}
-                >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='h-5 w-5'
+                {currentIndexImages[0] > 0 && (
+                  <button
+                    className='w-10/2 absolute left-0 top-1/2 z-10 h-9 -translate-y-1/2 bg-black/20 text-white'
+                    onClick={handlePrevious}
                   >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
-                  </svg>
-                </button>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth={1.5}
+                      stroke='currentColor'
+                      className='h-5 w-5'
+                    >
+                      <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
+                    </svg>
+                  </button>
+                )}
+
                 {currentImages?.slice(0, 5)?.map((image, index) => {
                   const isActive = image === activeImage;
                   return (
@@ -176,21 +179,23 @@ const ProductDetail = () => {
                     </div>
                   );
                 })}
-                <button
-                  className='w-10/2 absolute right-0 top-1/2 z-10 h-9 -translate-y-1/2 bg-black/20 text-white'
-                  onClick={handleNext}
-                >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='h-5 w-5'
+                {currentIndexImages[1] < images?.length && (
+                  <button
+                    className='w-10/2 absolute right-0 top-1/2 z-10 h-9 -translate-y-1/2 bg-black/20 text-white'
+                    onClick={handleNext}
                   >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
-                  </svg>
-                </button>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth={1.5}
+                      stroke='currentColor'
+                      className='h-5 w-5'
+                    >
+                      <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
             <div className='col-span-7'>
