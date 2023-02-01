@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Navigate, Outlet, useRoutes } from 'react-router-dom';
 import { Profile, Login, ProductList, Register, ProductDetail, Cart } from 'src/pages';
 import { AppContext } from 'src/contexts/app.context';
-import { MainLayout, RegisterLayout } from 'src/layouts';
+import { MainLayout, RegisterLayout, CartLayout } from 'src/layouts';
 import { path } from 'src/constants';
 
 const ProtectedRoute = () => {
@@ -61,9 +61,9 @@ export const useRouteElements = () => {
         {
           path: path.cart,
           element: (
-            <MainLayout>
+            <CartLayout>
               <Cart />
-            </MainLayout>
+            </CartLayout>
           )
         }
       ]
