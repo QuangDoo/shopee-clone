@@ -91,7 +91,7 @@ const ProductDetail = () => {
     // lấy giá trị mặc định của image naturalHeight và naturalWidth
     const { naturalHeight, naturalWidth } = image;
     // offsetX là tọa độ con trỏ chuột chiều ngang
-    // offetX là tọa độ con trỏ chuột chiều dọc
+    // offetY là tọa độ con trỏ chuột chiều dọc
     // cách 1: Lấy offetX và offsetY đơn giản khi chúng ta đã xử lý đc bubble event
     // bubble event là khi hover hoặc js event con thì đồng nghĩ đang hover vào element cha
     // pointer-events-none để counter bubble event
