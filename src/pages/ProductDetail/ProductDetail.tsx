@@ -1,16 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { productApi, purchaseApi } from 'src/apis';
 import { ProductRating, QuantityController } from 'src/component';
-import { PurchasesStatus } from 'src/constants';
+import { path, PurchasesStatus } from 'src/constants';
 import { calculateDiscountPercent, formatCurrency, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils';
 import { Product } from '../ProductList';
 
 const ProductDetail = () => {
   const { nameId } = useParams();
+
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -30,7 +32,7 @@ const ProductDetail = () => {
     staleTime: 3 * 60 * 1000
   });
 
-  const { mutate } = useMutation(purchaseApi.addToCart, {
+  const { mutate, mutateAsync } = useMutation(purchaseApi.addToCart, {
     onSuccess: () => {
       toast.success('Thêm vào giỏ hàng thành công');
       queryClient.invalidateQueries({ queryKey: ['purchases', { status: PurchasesStatus.inCart }] });
@@ -122,6 +124,13 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     mutate({ buy_count: buyCount, product_id: id });
+  };
+
+  const handleBuyNow = async () => {
+    const response = await mutateAsync({ buy_count: buyCount, product_id: id });
+    navigate(path.cart, {
+      state: { purchaseId: response.data.data?.product._id, productId: response.data.data?._id }
+    });
   };
 
   return (
@@ -254,7 +263,7 @@ const ProductDetail = () => {
                   </svg>
                   <div>Thêm vào giỏ hàng</div>
                 </button>
-                <button className='ml-2 rounded bg-red-500 px-3 py-3 capitalize text-white'>
+                <button className='ml-2 rounded bg-red-500 px-3 py-3 capitalize text-white' onClick={handleBuyNow}>
                   <div>Mua ngay</div>
                 </button>
               </div>
