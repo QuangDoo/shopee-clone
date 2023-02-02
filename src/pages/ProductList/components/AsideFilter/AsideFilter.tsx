@@ -127,18 +127,26 @@ const AsideFilter = ({ categories, queryConfig }: { categories: Category[]; quer
         <div>Khoảng giá</div>
         <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
-            {/* sử dụng useControl */}
-            <InputV2
+            <Controller
               control={control}
               name='price_min'
-              placeholder='₫ Từ'
-              type='number'
-              containerClassName='grow'
-              classNameError='hidden'
-              inputClassName='w-full rounded-sm border border-gray-300 p-1 outline-none focus:border-gray-500 focus:shadow-sm'
-              onChange={(event) => {
-                trigger('price_max');
-              }}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <InputNumber
+                  type='text'
+                  placeholder='₫ Từ'
+                  name='to'
+                  classNameError='hidden'
+                  containerClassName='grow'
+                  inputClassName='w-full rounded-sm border border-gray-300 p-1 outline-none focus:border-gray-500 focus:shadow-sm'
+                  onChange={(event) => {
+                    onChange(event);
+                    trigger('price_max');
+                  }}
+                  onBlur={onBlur}
+                  value={value}
+                  ref={ref}
+                />
+              )}
             />
 
             <div className='mx-2 mt-1 h-[1px] shrink-0 text-gray-400'>-</div>

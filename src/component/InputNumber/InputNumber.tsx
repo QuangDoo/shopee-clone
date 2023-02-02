@@ -15,6 +15,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props: Input
     inputClassName = 'w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500 focus:shadow-sm',
     classNameError = 'mt-1 min-h-[1.25rem] text-sm text-red-600',
     onChange,
+    onReset,
     value = '',
     ...rest
   } = props;
@@ -34,7 +35,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props: Input
 
   return (
     <div className={containerClassName}>
-      <input {...rest} className={inputClassName} value={value || localValue} onChange={handleChange} ref={ref} />
+      <input {...rest} className={inputClassName} value={value} onChange={handleChange} ref={ref} />
       <div className={classNameError}>{errorMessage}</div>
     </div>
   );
