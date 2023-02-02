@@ -9,7 +9,7 @@ export const isAxiosUnprocessableEntityError = <FormError>(error: unknown): erro
   return isAxiosError(error) && error?.response?.status === HttpStatusCode.UnprocessableEntity;
 };
 export const formatCurrency = (currency: number) => {
-  return new Intl.NumberFormat('de-DE').format(currency);
+  return '₫' + new Intl.NumberFormat('de-DE').format(currency);
 };
 
 export const formatNumberToSocialStyle = (value: number) => {

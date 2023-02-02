@@ -1,16 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { productApi, purchaseApi } from 'src/apis';
-import { Button, InputNumber, ProductRating, QuantityController } from 'src/component';
-import { PurchasesStatus } from 'src/constants';
+import { ProductRating, QuantityController } from 'src/component';
+import { path, PurchasesStatus } from 'src/constants';
 import { calculateDiscountPercent, formatCurrency, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils';
 import { Product } from '../ProductList';
 
 const ProductDetail = () => {
   const { nameId } = useParams();
+
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -30,7 +32,7 @@ const ProductDetail = () => {
     staleTime: 3 * 60 * 1000
   });
 
-  const { mutate } = useMutation(purchaseApi.addToCart, {
+  const { mutate, mutateAsync } = useMutation(purchaseApi.addToCart, {
     onSuccess: () => {
       toast.success('Thêm vào giỏ hàng thành công');
       queryClient.invalidateQueries({ queryKey: ['purchases', { status: PurchasesStatus.inCart }] });
@@ -53,7 +55,6 @@ const ProductDetail = () => {
     images = [],
     price = 0,
     rating = 0,
-    category,
     description = '',
     image,
     price_before_discount = 0,
@@ -79,9 +80,10 @@ const ProductDetail = () => {
   };
 
   const handlePrevious = () => {
-    if (currentIndexImages[0] > 0) {
-      setCurrentIndexImages((prev) => [prev[0] - 1, prev[1] - 1]);
+    if (currentIndexImages[0] === 0) {
+      return;
     }
+    setCurrentIndexImages((prev) => [prev[0] - 1, prev[1] - 1]);
   };
 
   const handleZoom = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -91,7 +93,7 @@ const ProductDetail = () => {
     // lấy giá trị mặc định của image naturalHeight và naturalWidth
     const { naturalHeight, naturalWidth } = image;
     // offsetX là tọa độ con trỏ chuột chiều ngang
-    // offetX là tọa độ con trỏ chuột chiều dọc
+    // offetY là tọa độ con trỏ chuột chiều dọc
     // cách 1: Lấy offetX và offsetY đơn giản khi chúng ta đã xử lý đc bubble event
     // bubble event là khi hover hoặc js event con thì đồng nghĩ đang hover vào element cha
     // pointer-events-none để counter bubble event
@@ -124,6 +126,13 @@ const ProductDetail = () => {
     mutate({ buy_count: buyCount, product_id: id });
   };
 
+  const handleBuyNow = async () => {
+    const response = await mutateAsync({ buy_count: buyCount, product_id: id });
+    navigate(path.cart, {
+      state: { purchaseId: response.data.data?.product._id, productId: response.data.data?._id }
+    });
+  };
+
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
@@ -143,21 +152,24 @@ const ProductDetail = () => {
                 />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
-                <button
-                  className='w-10/2 absolute left-0 top-1/2 z-10 h-9 -translate-y-1/2 bg-black/20 text-white'
-                  onClick={handlePrevious}
-                >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='h-5 w-5'
+                {currentIndexImages[0] > 0 && (
+                  <button
+                    className='w-10/2 absolute left-0 top-1/2 z-10 h-9 -translate-y-1/2 bg-black/20 text-white'
+                    onClick={handlePrevious}
                   >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
-                  </svg>
-                </button>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth={1.5}
+                      stroke='currentColor'
+                      className='h-5 w-5'
+                    >
+                      <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
+                    </svg>
+                  </button>
+                )}
+
                 {currentImages?.slice(0, 5)?.map((image, index) => {
                   const isActive = image === activeImage;
                   return (
@@ -176,21 +188,23 @@ const ProductDetail = () => {
                     </div>
                   );
                 })}
-                <button
-                  className='w-10/2 absolute right-0 top-1/2 z-10 h-9 -translate-y-1/2 bg-black/20 text-white'
-                  onClick={handleNext}
-                >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='h-5 w-5'
+                {currentIndexImages[1] < images?.length && (
+                  <button
+                    className='w-10/2 absolute right-0 top-1/2 z-10 h-9 -translate-y-1/2 bg-black/20 text-white'
+                    onClick={handleNext}
                   >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
-                  </svg>
-                </button>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth={1.5}
+                      stroke='currentColor'
+                      className='h-5 w-5'
+                    >
+                      <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
             <div className='col-span-7'>
@@ -211,8 +225,8 @@ const ProductDetail = () => {
                 </div>
               </div>
               <div className='mt-6 flex items-center bg-gray-50 px-5 py-4'>
-                <div className='text-sm text-gray-500 line-through'>₫{formatCurrency(price_before_discount)}</div>
-                <div className='ml-2 text-xl font-medium text-primary10'>₫{formatCurrency(price)}</div>
+                <div className='text-sm text-gray-500 line-through'>{formatCurrency(price_before_discount)}</div>
+                <div className='ml-2 text-xl font-medium text-primary10'>{formatCurrency(price)}</div>
                 <div className='ml-2 rounded-sm bg-primary10 p-1 text-sm font-semibold uppercase text-white'>
                   {calculateDiscountPercent(price_before_discount, price)} giảm
                 </div>
@@ -249,7 +263,7 @@ const ProductDetail = () => {
                   </svg>
                   <div>Thêm vào giỏ hàng</div>
                 </button>
-                <button className='ml-2 rounded bg-red-500 px-3 py-3 capitalize text-white'>
+                <button className='ml-2 rounded bg-red-500 px-3 py-3 capitalize text-white' onClick={handleBuyNow}>
                   <div>Mua ngay</div>
                 </button>
               </div>

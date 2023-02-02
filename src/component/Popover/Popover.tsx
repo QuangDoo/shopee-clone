@@ -11,6 +11,7 @@ type Props = {
   arrow?: boolean;
   placement?: Placement;
   offset?: number;
+  disable?: boolean;
 };
 
 const Popover = (props: Props) => {
@@ -22,7 +23,8 @@ const Popover = (props: Props) => {
     initialOpen,
     arrow: hasArrow = true,
     placement = 'bottom-end',
-    offset: offsetChildren = 6
+    offset: offsetChildren = 6,
+    disable = false
   } = props;
 
   const [showTooltip, setShowTooltip] = useState<boolean>(initialOpen || false);
@@ -34,8 +36,18 @@ const Popover = (props: Props) => {
     placement: placement
   });
 
-  const handleShowTooltip = () => setShowTooltip(true);
-  const handleHideTooltip = () => setShowTooltip(false);
+  const handleShowTooltip = () => {
+    if (disable) {
+      return;
+    }
+    setShowTooltip(true);
+  };
+  const handleHideTooltip = () => {
+    if (disable) {
+      return;
+    }
+    setShowTooltip(false);
+  };
 
   return (
     <Element className={className} onMouseEnter={handleShowTooltip} onMouseLeave={handleHideTooltip} ref={reference}>

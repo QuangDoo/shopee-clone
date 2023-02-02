@@ -9,3 +9,5 @@ export * from './ProductRating';
 export * from './InputNumber';
 export * from './RatingStar';
 export * from './QuantityController';
+export * from './NavHeader';
+export * from './CartHeader';
