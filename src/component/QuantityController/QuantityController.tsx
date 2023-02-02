@@ -9,11 +9,11 @@ type Props = {
   onDecrease?: (value: number) => void;
   onTyping?: (value: number) => void;
   onFocusOut?: (value: number) => void;
-  classNameWrapper?: string;
+  containerClassName?: string;
 } & InputNumberProps;
 
 const QuantityController = (props: Props) => {
-  const { max, onIncrease, onDecrease, onTyping, classNameWrapper = 'ml-10', value, onFocusOut, ...rest } = props;
+  const { max, onIncrease, onDecrease, onTyping, containerClassName = 'ml-10', value, onFocusOut, ...rest } = props;
 
   const [localValue, setLocalValue] = useState<number>(Number(value) || 0);
 
@@ -30,7 +30,7 @@ const QuantityController = (props: Props) => {
   };
 
   const handeIncrease = () => {
-    let _value = localValue + 1;
+    let _value = Number(value || localValue) + 1;
 
     if (max && _value > max) {
       _value = max;
@@ -41,10 +41,10 @@ const QuantityController = (props: Props) => {
   };
 
   const handeDecrease = () => {
-    let _value = localValue - 1;
+    let _value = Number(value || localValue) - 1;
 
-    if (_value <= 0) {
-      _value = 0;
+    if (_value <= 1) {
+      _value = 1;
     }
 
     onDecrease?.(_value);
@@ -56,7 +56,7 @@ const QuantityController = (props: Props) => {
   };
 
   return (
-    <div className={'flex items-center text-gray-600' + classNameWrapper}>
+    <div className={'flex items-center text-gray-600' + containerClassName}>
       <Button className='border border-r-0 border-gray-400 py-2 px-3' onClick={handeDecrease}>
         -
       </Button>

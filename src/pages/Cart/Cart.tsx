@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { debounce } from 'lodash';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { purchaseApi, PurchaseVars } from 'src/apis';
 import { Button, QuantityController } from 'src/component';
@@ -11,6 +11,10 @@ import { formatCurrency, generateNameId } from 'src/utils';
 const Cart = () => {
   const [purchasesId, setPurchasesId] = useState<string[]>([]);
   const [productIds, setProductIds] = useState<string[]>([]);
+
+  console.log('productIds', productIds);
+
+  const { state } = useLocation();
 
   const { data: purchaseInCartData, refetch: refetchPurchasesInCart } = useQuery({
     queryKey: ['purchases', { status: PurchasesStatus.inCart }],
@@ -39,6 +43,13 @@ const Cart = () => {
     }
   });
 
+  useEffect(() => {
+    if (state?.purchaseId && state?.productId) {
+      setPurchasesId((prevState) => [...prevState, state.purchaseId]);
+      setProductIds((prevState) => [...prevState, state.productId]);
+    }
+  }, [state?.purchaseId, state?.productId]);
+
   const purchaseInCart = purchaseInCartData?.data?.data || [];
 
   const purchasesSelected = purchaseInCart.filter((purchase) => purchasesId.includes(purchase.product._id));
@@ -50,13 +61,15 @@ const Cart = () => {
     0
   );
 
-  const handleSelectProduct = (_id: string) => () => {
-    const index = purchasesId.findIndex((item) => item === _id);
+  const handleSelectProduct = (purchase: Purchase) => () => {
+    const index = purchasesId.findIndex((item) => item === purchase.product._id);
 
     if (index === -1) {
-      setPurchasesId((prevState) => [...prevState, _id]);
+      setPurchasesId((prevState) => [...prevState, purchase.product._id]);
+      setProductIds((prevState) => [...prevState, purchase._id]);
     } else {
-      setPurchasesId((prevState) => prevState.filter((item) => item !== _id));
+      setPurchasesId((prevState) => prevState.filter((item) => item !== purchase.product._id));
+      setProductIds((prevState) => prevState.filter((item) => item !== purchase._id));
     }
   };
 
@@ -72,10 +85,6 @@ const Cart = () => {
   };
 
   const handleQuantity = (purchase: Purchase) => (value: number) => {
-    if (value < 1) {
-      return;
-    }
-
     updatePurchasesIncartMudate({ product_id: purchase.product._id, buy_count: value });
   };
 
@@ -136,7 +145,7 @@ const Cart = () => {
                           <input
                             type='checkbox'
                             className='h-5 w-5 accent-primary10'
-                            onChange={handleSelectProduct(purchase.product._id)}
+                            onChange={handleSelectProduct(purchase)}
                             checked={isSeleted}
                           />
                         </div>

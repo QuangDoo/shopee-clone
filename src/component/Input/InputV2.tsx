@@ -5,7 +5,6 @@ export type InputNumberProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
-  containerClassName?: string;
   inputClassName?: string;
   classNameError?: string;
 } & InputHTMLAttributes<HTMLInputElement> &
