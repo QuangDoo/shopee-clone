@@ -52,6 +52,9 @@ http.interceptors.response.use(
       const message = data?.message || error.message;
       toast.error(message || 'Đã có lỗi xảy ra');
     }
+    if (error.response?.status === HttpStatusCode.Unauthorized) {
+      clearLocalStorage();
+    }
     return Promise.reject(error);
   }
 );
