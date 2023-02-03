@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { purchaseApi } from 'src/apis';
-import { path, PurchasesStatus } from 'src/constants';
+import { path, purchasesStatus } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
 import useSearchProducts from 'src/hooks/useSearchProducts';
 import { formatCurrency } from 'src/utils';
@@ -17,8 +17,8 @@ const Header = () => {
 
   const { onSubmit, register } = useSearchProducts();
   const { data: purchaseInCartData } = useQuery({
-    queryKey: ['purchases', { status: PurchasesStatus.inCart }],
-    queryFn: () => purchaseApi.getPurchases({ status: PurchasesStatus.inCart }),
+    queryKey: ['purchases', { status: purchasesStatus.inCart }],
+    queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart }),
     enabled: isAuthenticated
   });
 

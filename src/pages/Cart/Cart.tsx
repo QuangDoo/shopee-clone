@@ -5,20 +5,18 @@ import { Link, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { purchaseApi, PurchaseVars } from 'src/apis';
 import { Button, QuantityController } from 'src/component';
-import { path, PurchasesStatus } from 'src/constants';
+import { path, purchasesStatus } from 'src/constants';
 import { formatCurrency, generateNameId } from 'src/utils';
 
 const Cart = () => {
   const [purchasesId, setPurchasesId] = useState<string[]>([]);
   const [productIds, setProductIds] = useState<string[]>([]);
 
-  console.log('productIds', productIds);
-
   const { state } = useLocation();
 
   const { data: purchaseInCartData, refetch: refetchPurchasesInCart } = useQuery({
-    queryKey: ['purchases', { status: PurchasesStatus.inCart }],
-    queryFn: () => purchaseApi.getPurchases({ status: PurchasesStatus.inCart })
+    queryKey: ['purchases', { status: purchasesStatus.inCart }],
+    queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart })
   });
 
   const { mutate: updatePurchasesIncartMudate } = useMutation({

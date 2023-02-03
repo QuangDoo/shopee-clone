@@ -40,6 +40,7 @@ const Register = () => {
         navigate(path.home);
       },
       onError: (error) => {
+        // handle error 422
         if (isAxiosUnprocessableEntityError<ResponseApi<Omit<Schema, 'confirm_password'>>>(error)) {
           const formError = error?.response?.data?.data;
 

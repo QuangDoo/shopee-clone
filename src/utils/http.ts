@@ -1,12 +1,12 @@
 import axios, { AxiosError, HttpStatusCode } from 'axios';
 import { toast } from 'react-toastify';
-import { path } from 'src/constants';
+import { config, path } from 'src/constants';
 import { clearLocalStorage, getAccessTokenFromLS, setAccessToken, setProfileToLS } from './auth';
 
 let accessToken = getAccessTokenFromLS();
 
 export const http = axios.create({
-  baseURL: 'https://api-ecom.duthanhduoc.com/',
+  baseURL: config.baseUrl,
   timeout: 1000,
   headers: { 'Content-Type': 'application/json' }
 });
@@ -49,8 +49,7 @@ http.interceptors.response.use(
     // Do something with response error
     if (error.response?.status !== HttpStatusCode.UnprocessableEntity) {
       const data: any | undefined = error.response?.data;
-      const message = data.message || error.message;
-      console.log('message', message);
+      const message = data?.message || error.message;
       toast.error(message || 'Đã có lỗi xảy ra');
     }
     return Promise.reject(error);
