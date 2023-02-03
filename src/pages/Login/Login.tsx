@@ -1,93 +1,95 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation } from '@tanstack/react-query';
-import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { schema, Schema } from 'src/utils/rules';
+import { useMutation } from '@tanstack/react-query';
+import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
+import { useContext } from 'react';
+import { AppContext } from 'src/contexts/app.context';
 import { authApi } from 'src/apis';
 import { Button, Input } from 'src/component';
-import { path } from 'src/constants';
-import { AppContext } from 'src/contexts/app.context';
-import { loginSchema, Schema } from 'src/utils';
-import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
 
-type Input = Omit<Schema, 'confirm_password'>;
+type FormData = Pick<Schema, 'email' | 'password'>;
+const loginSchema = schema.pick(['email', 'password']);
 
-const Login = () => {
+export default function Login() {
+  const { setIsAuthenticated, setProfile } = useContext(AppContext);
+  const navigate = useNavigate();
   const {
     register,
-    handleSubmit,
     setError,
+    handleSubmit,
     formState: { errors }
-  } = useForm<Input>({
+  } = useForm<FormData>({
     resolver: yupResolver(loginSchema)
   });
 
-  const { setIsAuthenticated, setProfile } = useContext(AppContext);
-
-  const navigate = useNavigate();
-
-  const { mutate, isLoading } = useMutation({
-    mutationFn: (payload: Input) => authApi.loginAccount(payload)
+  const loginMutation = useMutation({
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) => authApi.loginAccount(body)
   });
 
-  const onSubmit = (payload: Input) => {
-    mutate(payload, {
+  const onSubmit = handleSubmit((data) => {
+    loginMutation.mutate(data, {
       onSuccess: (data) => {
         setIsAuthenticated(true);
         setProfile(data.data.data?.user);
-        navigate(path.home);
+        navigate('/');
       },
       onError: (error) => {
-        if (isAxiosUnprocessableEntityError<ResponseApi<Input>>(error)) {
-          const formError = error?.response?.data?.data;
-
+        if (isAxiosUnprocessableEntityError<ResponseApi<FormData>>(error)) {
+          const formError = error.response?.data.data;
           if (formError) {
-            Object.keys(formError).map((key) => {
-              return setError(key as keyof Input, {
-                message: formError[key as keyof Input],
+            Object.keys(formError).forEach((key) => {
+              setError(key as keyof FormData, {
+                message: formError[key as keyof FormData],
                 type: 'Server'
               });
             });
           }
         }
-
-        console.log('error', error);
       }
     });
-  };
+  });
 
   return (
     <div className='bg-primary10'>
       <div className='container'>
-        <div className='grid grid-cols-1 py-10 md:py-14 lg:grid-cols-5 lg:py-32 lg:pr-10'>
+        <div className='grid grid-cols-1 py-12 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form className='rounded bg-white p-10 shadow-sm' onSubmit={handleSubmit(onSubmit)}>
+            <form className='rounded bg-white p-10 shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng nhập</div>
               <Input
-                type='email'
                 name='email'
-                placeholder='Email'
-                errorMessage={errors?.email?.message}
                 register={register}
+                type='email'
+                className='mt-8'
+                errorMessage={errors.email?.message}
+                placeholder='Email'
               />
               <Input
-                type='password'
                 name='password'
-                placeholder='Passwrod'
-                errorMessage={errors?.password?.message}
                 register={register}
+                type='password'
+                className='mt-2'
+                errorMessage={errors.password?.message}
+                placeholder='Password'
+                autoComplete='on'
               />
-
               <div className='mt-3'>
-                <Button isLoading={isLoading} disabled={isLoading} type='submit'>
+                <Button
+                  type='submit'
+                  className='flex w-full items-center justify-center bg-red-500 py-4 px-2 text-sm uppercase text-white hover:bg-red-600'
+                  isLoading={loginMutation.isLoading}
+                  disabled={loginMutation.isLoading}
+                >
                   Đăng nhập
                 </Button>
               </div>
-              <div className='mt-6 flex content-center items-center justify-center'>
-                <div className='mr-2 text-gray-400'>Bạn mới biết đến Shopee fake?</div>
-                <div className='text-primary10 underline-offset-2 opacity-75'>
-                  <Link to='/register'>Đăng ký</Link>
-                </div>
+              <div className='mt-8 flex items-center justify-center'>
+                <span className='text-gray-400'>Bạn chưa có tài khoản?</span>
+                <Link className='ml-1 text-red-400' to='/register'>
+                  Đăng ký
+                </Link>
               </div>
             </form>
           </div>
@@ -95,6 +97,4 @@ const Login = () => {
       </div>
     </div>
   );
-};
-
-export default Login;
+}

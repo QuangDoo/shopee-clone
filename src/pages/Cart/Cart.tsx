@@ -12,6 +12,8 @@ const Cart = () => {
   const [purchasesId, setPurchasesId] = useState<string[]>([]);
   const [productIds, setProductIds] = useState<string[]>([]);
 
+  console.log('purchasesId', purchasesId);
+
   const { state } = useLocation();
 
   const { data: purchaseInCartData, refetch: refetchPurchasesInCart } = useQuery({
