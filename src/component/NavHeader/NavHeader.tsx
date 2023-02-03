@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { authApi } from 'src/apis';
-import { path, PurchasesStatus } from 'src/constants';
+import { path, purchasesStatus } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
-import { clearLocalStorage } from 'src/utils';
+import { clearLocalStorage, getAvatarUrl } from 'src/utils';
 import { Popover } from '../Popover';
 
 const NavHeader = () => {
@@ -14,7 +14,7 @@ const NavHeader = () => {
     onSuccess: () => {
       clearLocalStorage();
       setIsAuthenticated(false);
-      queryClient.removeQueries({ queryKey: ['purchases', { status: PurchasesStatus.inCart }] });
+      queryClient.removeQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] });
     }
   });
 
@@ -84,9 +84,9 @@ const NavHeader = () => {
             <div className='mr-2 h-6 w-6 flex-shrink-0'>
               <img
                 className='h-full w-full rounded-full object-cover'
-                src='https://cf.shopee.vn/file/ef2f6d59be398920fc2f5b252aa8f7d9_tn'
+                src={getAvatarUrl(profile?.avatar)}
                 alt='avatar'
-              ></img>
+              />
             </div>
             <div>{profile?.email} </div>
           </div>

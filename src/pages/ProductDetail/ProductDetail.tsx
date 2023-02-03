@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { productApi, purchaseApi } from 'src/apis';
 import { ProductRating, QuantityController } from 'src/component';
-import { path, PurchasesStatus } from 'src/constants';
+import { path, purchasesStatus } from 'src/constants';
 import { calculateDiscountPercent, formatCurrency, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils';
 import { Product } from '../ProductList';
 
@@ -35,7 +35,7 @@ const ProductDetail = () => {
   const { mutate, mutateAsync } = useMutation(purchaseApi.addToCart, {
     onSuccess: () => {
       toast.success('Thêm vào giỏ hàng thành công');
-      queryClient.invalidateQueries({ queryKey: ['purchases', { status: PurchasesStatus.inCart }] });
+      queryClient.invalidateQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] });
     }
   });
 

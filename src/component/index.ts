@@ -11,3 +11,4 @@ export * from './RatingStar';
 export * from './QuantityController';
 export * from './NavHeader';
 export * from './CartHeader';
+export * from './DatePicker';

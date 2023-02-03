@@ -1,6 +1,6 @@
-type PurchasesStatus = -1 | 1 | 2 | 3 | 4 | 5;
+type purchasesStatus = -1 | 1 | 2 | 3 | 4 | 5;
 
-type PurchaseListStatus = PurchasesStatus | 0;
+type PurchaseListStatus = purchasesStatus | 0;
 
 type Purchase = {
   buy_count: number;
