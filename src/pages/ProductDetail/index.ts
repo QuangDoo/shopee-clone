@@ -1,1 +1,3 @@
-export { default as ProductDetail } from './ProductDetail';
+import ProductDetail from './ProductDetail';
+
+export default ProductDetail;
