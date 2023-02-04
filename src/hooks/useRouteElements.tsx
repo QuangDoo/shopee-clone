@@ -1,6 +1,16 @@
 import { useContext } from 'react';
 import { Navigate, Outlet, useRoutes } from 'react-router-dom';
-import { Login, ProductList, Register, ProductDetail, Cart, User, ChangePassword, PurchaseHistory } from 'src/pages';
+import {
+  Login,
+  ProductList,
+  Register,
+  ProductDetail,
+  Cart,
+  User,
+  ChangePassword,
+  PurchaseHistory,
+  NotFound
+} from 'src/pages';
 import { AppContext } from 'src/contexts/app.context';
 import { MainLayout, RegisterLayout, CartLayout } from 'src/layouts';
 import { path } from 'src/constants';
@@ -94,12 +104,15 @@ export const useRouteElements = () => {
     },
     {
       path: path.productDetail,
-      index: true,
       element: (
         <MainLayout>
           <ProductDetail />
         </MainLayout>
       )
+    },
+    {
+      path: path.notFound,
+      element: <NotFound />
     }
   ]);
 
