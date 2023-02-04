@@ -1,20 +1,29 @@
-import { useContext } from 'react';
+import { lazy, useContext, Suspense } from 'react';
 import { Navigate, Outlet, useRoutes } from 'react-router-dom';
-import {
-  Login,
-  ProductList,
-  Register,
-  ProductDetail,
-  Cart,
-  User,
-  ChangePassword,
-  PurchaseHistory,
-  NotFound
-} from 'src/pages';
+import // Login,
+// ProductList,
+// Register,
+// ProductDetail,
+// Cart,
+// User,
+// ChangePassword,
+// PurchaseHistory,
+// NotFound
+'src/pages';
 import { AppContext } from 'src/contexts/app.context';
 import { MainLayout, RegisterLayout, CartLayout } from 'src/layouts';
 import { path } from 'src/constants';
 import { UserLayout } from 'src/pages/Profile/layouts';
+
+const Login = lazy(() => import('src/pages/Login'));
+const Register = lazy(() => import('src/pages').then(({ Register }) => ({ default: Register })));
+const ProductDetail = lazy(() => import('src/pages/ProductDetail'));
+const Cart = lazy(() => import('src/pages/Cart'));
+const PurchaseHistory = lazy(() => import('src/pages/Profile/pages/PurchaseHistory'));
+const ChangePassword = lazy(() => import('src/pages/Profile/pages/ChangePassword'));
+const User = lazy(() => import('src/pages/Profile/pages/User'));
+const ProductList = lazy(() => import('src/pages/ProductList'));
+const NotFound = lazy(() => import('src/pages/NotFound'));
 
 const ProtectedRoute = () => {
   const { isAuthenticated } = useContext(AppContext);
@@ -41,7 +50,9 @@ export const useRouteElements = () => {
           path: path.login,
           element: (
             <RegisterLayout>
-              <Login />
+              <Suspense>
+                <Login />
+              </Suspense>
             </RegisterLayout>
           )
         },
@@ -49,7 +60,9 @@ export const useRouteElements = () => {
           path: path.register,
           element: (
             <RegisterLayout>
-              <Register />
+              <Suspense>
+                <Register />
+              </Suspense>
             </RegisterLayout>
           )
         }
@@ -71,15 +84,27 @@ export const useRouteElements = () => {
           children: [
             {
               path: path.changePassword,
-              element: <ChangePassword />
+              element: (
+                <Suspense>
+                  <ChangePassword />
+                </Suspense>
+              )
             },
             {
               path: path.purchaseHistory,
-              element: <PurchaseHistory />
+              element: (
+                <Suspense>
+                  <PurchaseHistory />
+                </Suspense>
+              )
             },
             {
               path: path.user,
-              element: <User />
+              element: (
+                <Suspense>
+                  <User />
+                </Suspense>
+              )
             }
           ]
         },
@@ -87,7 +112,9 @@ export const useRouteElements = () => {
           path: path.cart,
           element: (
             <CartLayout>
-              <Cart />
+              <Suspense>
+                <Cart />
+              </Suspense>
             </CartLayout>
           )
         }
@@ -98,7 +125,9 @@ export const useRouteElements = () => {
       index: true,
       element: (
         <MainLayout>
-          <ProductList />
+          <Suspense>
+            <ProductList />
+          </Suspense>
         </MainLayout>
       )
     },
@@ -106,13 +135,19 @@ export const useRouteElements = () => {
       path: path.productDetail,
       element: (
         <MainLayout>
-          <ProductDetail />
+          <Suspense>
+            <ProductDetail />
+          </Suspense>
         </MainLayout>
       )
     },
     {
       path: path.notFound,
-      element: <NotFound />
+      element: (
+        <Suspense>
+          <NotFound />
+        </Suspense>
+      )
     }
   ]);
 
