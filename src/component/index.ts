@@ -12,3 +12,4 @@ export * from './QuantityController';
 export * from './NavHeader';
 export * from './CartHeader';
 export * from './DatePicker';
+export * from './ErrorBoundary';
