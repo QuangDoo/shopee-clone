@@ -61,24 +61,25 @@ const User = () => {
   }, [user, setValue]);
 
   const handleOnUpdate = handleSubmit(async (data) => {
+    let avatarName = '';
     try {
+      const form = new FormData();
       if (file) {
-        const form = new FormData();
         form.append('image', file);
         const uploadResponse = await uploadAvatarMutate(form);
-        const avatarName = uploadResponse.data.data;
-
-        const response = await updateProfileMutate({
-          ...data,
-          date_of_birth: data.date_of_birth?.toISOString(),
-          avatar: avatarName
-        });
-        console.log('response', response);
-        refetchUser();
-        toast.success(response.data.message);
-        setProfile(response.data.data);
-        setProfileToLS(response.data.data as User);
+        avatarName = uploadResponse?.data?.data || '';
       }
+
+      const response = await updateProfileMutate({
+        ...data,
+        date_of_birth: data.date_of_birth?.toISOString(),
+        avatar: avatarName
+      });
+
+      refetchUser();
+      toast.success(response.data.message);
+      setProfile(response.data.data);
+      setProfileToLS(response.data.data as User);
     } catch (error) {
       if (isAxiosUnprocessableEntityError<ResponseApi<FormErrorData>>(error)) {
         const formError = error?.response?.data?.data;

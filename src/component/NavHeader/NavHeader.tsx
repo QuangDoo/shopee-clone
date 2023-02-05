@@ -67,10 +67,10 @@ const NavHeader = () => {
           renderPopover={
             <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
               <div className='flex flex-col items-start'>
-                <Link to={path.profile} className='py-2 px-3 hover:text-primary10'>
+                <Link to={path.user} className='py-2 px-3 hover:text-primary10'>
                   Tài khoản của tôi
                 </Link>
-                <Link to='purchases' className='py-2 px-3 hover:text-primary10'>
+                <Link to={path.purchaseHistory} className='py-2 px-3 hover:text-primary10'>
                   Đơn mua
                 </Link>
                 <button onClick={handleLogout} className='py-2 px-3 hover:text-primary10'>

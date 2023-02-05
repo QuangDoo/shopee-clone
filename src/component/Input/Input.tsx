@@ -10,6 +10,7 @@ type Props = {
   rules?: RegisterOptions;
   errorMessage?: string;
   autoComplete?: string;
+  classEye?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 const Input = (props: Props) => {
@@ -21,6 +22,7 @@ const Input = (props: Props) => {
     errorMessage,
     inputClassName = 'w-full rounded-sm border border-gray-300 p-3 outline-none focus:border-gray-500 focus:shadow-sm',
     classNameError = 'mt-1 min-h-[1.25rem] text-sm text-red-600',
+    classEye,
     type,
     ...rest
   } = props;
@@ -40,7 +42,11 @@ const Input = (props: Props) => {
         type={type === 'password' && visibleEye ? type : 'text'}
       />
       {type === 'password' && (
-        <Button className='absolute top-0 right-1 translate-y-2 cursor-pointer' onClick={onToogleEye} type='button'>
+        <Button
+          className={'absolute top-0 right-1 translate-y-2 cursor-pointer ' + classEye}
+          onClick={onToogleEye}
+          type='button'
+        >
           {visibleEye ? (
             <svg
               xmlns='http://www.w3.org/2000/svg'

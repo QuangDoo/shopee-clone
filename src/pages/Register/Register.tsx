@@ -78,12 +78,14 @@ const Register = () => {
                 register={register}
                 errorMessage={errors?.password?.message}
                 autoComplete='on'
+                containerClassName='relative'
               />
               <Input
                 type='password'
                 placeholder='Confirm password'
                 name='confirm_password'
                 autoComplete='on'
+                containerClassName='relative'
                 register={register}
                 errorMessage={errors?.confirm_password?.message}
               />
