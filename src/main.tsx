@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AppProvider } from './contexts/app.context';
 import { ErrorBoundary } from './component';
 import 'src/i18n/i18n';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -25,11 +26,13 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <AppProvider>
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
-        </AppProvider>
+        <HelmetProvider>
+          <AppProvider>
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
+          </AppProvider>
+        </HelmetProvider>
         <ToastContainer />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

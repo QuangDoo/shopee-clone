@@ -10,6 +10,7 @@ import { path } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
 import { Schema, schema } from 'src/utils';
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
+import { Helmet } from 'react-helmet-async';
 
 type Input = Pick<Schema, 'email' | 'password' | 'confirm_password'>;
 const registerSchema = schema.pick(['email', 'password', 'confirm_password']);
@@ -59,6 +60,10 @@ const Register = () => {
 
   return (
     <div className='bg-primary10'>
+      <Helmet>
+        <title>Đăng ký | Shopee Clone</title>
+        <meta name='description' content='Đăng ký | Shopee Clone' />
+      </Helmet>
       <div className='container'>
         <div className='grid grid-cols-1 py-10 md:py-14 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
