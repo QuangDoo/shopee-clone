@@ -9,6 +9,7 @@ import { ProductRating, QuantityController } from 'src/component';
 import { path, purchasesStatus } from 'src/constants';
 import { calculateDiscountPercent, formatCurrency, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils';
 import { Product } from '../ProductList';
+import { Helmet } from 'react-helmet-async';
 
 const ProductDetail = () => {
   const { nameId } = useParams();
@@ -138,6 +139,10 @@ const ProductDetail = () => {
 
   return (
     <div className='bg-gray-200 py-6'>
+      <Helmet>
+        <title>{name}</title>
+        <meta name='description' content={name} />
+      </Helmet>
       <div className='container'>
         <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>

@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react';
 import { AppContext } from './contexts/app.context';
 import { useRouteElements } from './hooks';
 import { LocalStorageEventTartget } from './utils';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 function App() {
   const routeElements = useRouteElements();
@@ -15,7 +16,15 @@ function App() {
     };
   }, [reset]);
 
-  return <div>{routeElements}</div>;
+  return (
+    <div>
+      <Helmet>
+        <title>Hello World</title>
+        <link rel='canonical' href='https://www.tacobell.com/' />
+      </Helmet>
+      {routeElements}
+    </div>
+  );
 }
 
 export default App;

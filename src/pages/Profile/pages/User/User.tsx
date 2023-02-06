@@ -8,6 +8,7 @@ import { Button, DatePicker, Input, InputNumber } from 'src/component';
 import { config } from 'src/constants';
 import { AppContext } from 'src/contexts/app.context';
 import { getAvatarUrl, isAxiosUnprocessableEntityError, setProfileToLS, userSchema, UserSchema } from 'src/utils';
+import { Helmet } from 'react-helmet-async';
 
 type FormData = Pick<UserSchema, 'avatar' | 'name' | 'address' | 'phone' | 'date_of_birth'>;
 type FormErrorData = Omit<FormData, 'date_of_birth'> & { date_of_birth?: string };
@@ -113,6 +114,10 @@ const User = () => {
 
   return (
     <div className='rounded-md bg-white px-2 py-3 md:px-4'>
+      <Helmet>
+        <title>Profile | Shopee Clone</title>
+        <meta name='description' content='Profile | Shopee Clone' />
+      </Helmet>
       <div className='text-lg font-medium text-black'>Hồ sơ của tôi</div>
       <div className='text-md text-gray-600'>Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
       <div className='my-5 h-[0.5px] w-full bg-gray-300'></div>

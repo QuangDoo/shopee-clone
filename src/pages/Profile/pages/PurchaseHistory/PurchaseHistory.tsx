@@ -6,6 +6,7 @@ import { Input } from 'src/component';
 import { path, purchasesStatus } from 'src/constants';
 import useQueryParams from 'src/hooks/useQueryParams';
 import { formatCurrency, generateNameId } from 'src/utils';
+import { Helmet } from 'react-helmet-async';
 
 const purchaesStatusTabs = [
   { type: purchasesStatus.all, name: 'Tất cả' },
@@ -29,6 +30,10 @@ const PurchaseHistory = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Đơn hàng | Shopee Clone</title>
+        <meta name='description' content='Đơn hàng | Shopee Clone' />
+      </Helmet>
       <div className='sticky top-0 flex rounded-t-sm shadow-sm'>
         {purchaesStatusTabs.map((status) => {
           const isActive = queryStatusType === status.type;
