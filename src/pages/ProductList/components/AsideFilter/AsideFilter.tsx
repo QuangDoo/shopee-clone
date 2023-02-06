@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import classNames from 'classnames';
 import omit from 'lodash/omit';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { createSearchParams, Link, useNavigate } from 'react-router-dom';
 import { Button, InputNumber, InputV2, RatingStar } from 'src/component';
 import { path } from 'src/constants';
@@ -36,6 +37,8 @@ const AsideFilter = ({ categories, queryConfig }: { categories: Category[]; quer
   });
 
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   const onSubmit = handleSubmit((data) => {
     navigate({
@@ -73,7 +76,7 @@ const AsideFilter = ({ categories, queryConfig }: { categories: Category[]; quer
             </g>
           </g>
         </svg>
-        <div className='text-sm md:text-base'>Tất cả danh mục</div>
+        <div className='text-sm md:text-base'>{t('aside filter.all categories')}</div>
       </Link>
       <div className='my-4 h-[1px] bg-gray-300' />
       <ul>
