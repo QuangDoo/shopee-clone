@@ -1,7 +1,7 @@
-import { http } from 'src/utils';
+import { http2 } from 'src/utils';
 
 export const categoryApi = {
   getCategory: () => {
-    return http.get<ResponseApi<Category[]>>('/categories');
+    return http2.get<ResponseApi<Category[]>>('/categories');
   }
 };
