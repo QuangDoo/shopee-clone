@@ -1,4 +1,4 @@
-import { http } from 'src/utils';
+import { http2 } from 'src/utils';
 
 type BodyUploadProfile = Pick<User, 'name' | 'address' | 'date_of_birth' | 'avatar'> & {
   password?: string;
@@ -8,10 +8,10 @@ type BodyUploadProfile = Pick<User, 'name' | 'address' | 'date_of_birth' | 'avat
 const URL = '/me';
 
 export const userApi = {
-  getProfile: () => http.get<ResponseApi<User>>(URL),
-  updateProfile: (body: BodyUploadProfile) => http.put<ResponseApi<User>>(URL, body),
+  getProfile: () => http2.get<ResponseApi<User>>(URL),
+  updateProfile: (body: BodyUploadProfile) => http2.put<ResponseApi<User>>(URL, body),
   uploadAvatar: (body: FormData) =>
-    http.post<ResponseApi<string>>(`user/upload-avatar`, body, {
+    http2.post<ResponseApi<string>>(`user/upload-avatar`, body, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

@@ -1,12 +1,12 @@
-import { http } from 'src/utils';
+import { http2 } from 'src/utils';
 
 const URL = '/products';
 
 export const productApi = {
   getProductList: (payload: ProductListParams) => {
-    return http.get<ResponseApi<ProductList>>(URL, { params: payload });
+    return http2.get<ResponseApi<ProductList>>(URL, { params: payload });
   },
   getProductDetail: (id: string) => {
-    return http.get<ResponseApi<Product>>(`${URL}/${id}`);
+    return http2.get<ResponseApi<Product>>(`${URL}/${id}`);
   }
 };
