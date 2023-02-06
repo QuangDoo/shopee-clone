@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { productApi, purchaseApi } from 'src/apis';
@@ -15,6 +16,8 @@ const ProductDetail = () => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
+
+  const { t } = useTranslation('product');
 
   const id = getIdFromNameId(nameId + '');
 
@@ -240,7 +243,9 @@ const ProductDetail = () => {
                   max={quantity}
                   value={buyCount}
                 />
-                <div className='ml-2 text-sm font-medium capitalize text-gray-400'>{quantity} sản phẩm có sẵn</div>
+                <div className='ml-2 text-sm font-medium capitalize text-gray-400'>
+                  {quantity} {t('available products')}
+                </div>
               </div>
               <div className='mt-8 flex items-center'>
                 <button

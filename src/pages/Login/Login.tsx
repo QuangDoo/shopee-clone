@@ -74,6 +74,8 @@ export default function Login() {
                 errorMessage={errors.password?.message}
                 placeholder='Password'
                 autoComplete='on'
+                containerClassName='relative'
+                classEye='top-1'
               />
               <div className='mt-3'>
                 <Button

@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -78,12 +78,14 @@ const Register = () => {
                 register={register}
                 errorMessage={errors?.password?.message}
                 autoComplete='on'
+                containerClassName='relative'
               />
               <Input
                 type='password'
                 placeholder='Confirm password'
                 name='confirm_password'
                 autoComplete='on'
+                containerClassName='relative'
                 register={register}
                 errorMessage={errors?.confirm_password?.message}
               />

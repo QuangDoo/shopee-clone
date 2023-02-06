@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { createSearchParams } from 'react-router-dom';

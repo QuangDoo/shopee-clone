@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { useNavigate } from 'react-router';
 import { createSearchParams, Link } from 'react-router-dom';
 import { Button, Popover } from 'src/component';
