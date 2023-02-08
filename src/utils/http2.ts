@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import axios, { AxiosError, HttpStatusCode } from 'axios';
+import axios, { AxiosError, HttpStatusCode, type InternalAxiosRequestConfig } from 'axios';
 import { toast } from 'react-toastify';
 import { URL_LOGIN, URL_LOGOUT, URL_REFRESH_TOKEN, URL_REGISTER } from 'src/apis';
 import { config } from 'src/constants';
@@ -88,31 +88,30 @@ http2.interceptors.response.use(
 
     // Nếu là lỗi 401
     if (isAxiosUnauthorizedError<ResponseApi<{ name: string; message: string }>>(error)) {
-      const config = error.response?.config;
-      if (config) {
-        const { url, headers } = config;
-        // trường hợp token hết hạn và request đó không phải là của request refresh token
-        // thì chúng ta mới tiến hành gọi refresh token
-        if (isAxiosExpiredTokenError(error) && url !== URL_REFRESH_TOKEN) {
-          // hạn chế gọi refresh token hai lần
-          refreshTokenRequest = refreshTokenRequest
-            ? refreshTokenRequest
-            : handleRefreshToken().finally(() => {
-                setTimeout(() => {
-                  refreshTokenRequest = null;
-                }, 10000);
-              });
+      const config = error.response?.config || ({ headers: {} } as InternalAxiosRequestConfig);
 
-          const access_token = await refreshTokenRequest;
-          // Nghĩa là chúng ta tiếp tục gọi lại request cũ vừa bị lỗi
-
-          if (headers) {
-            return http2.request({
-              ...config,
-              // @ts-ignore
-              headers: { ...headers, authorization: access_token }
+      const { url, headers } = config;
+      // trường hợp token hết hạn và request đó không phải là của request refresh token
+      // thì chúng ta mới tiến hành gọi refresh token
+      if (isAxiosExpiredTokenError(error) && url !== URL_REFRESH_TOKEN) {
+        // hạn chế gọi refresh token hai lần
+        refreshTokenRequest = refreshTokenRequest
+          ? refreshTokenRequest
+          : handleRefreshToken().finally(() => {
+              setTimeout(() => {
+                refreshTokenRequest = null;
+              }, 10000);
             });
-          }
+
+        const access_token = await refreshTokenRequest;
+        // Nghĩa là chúng ta tiếp tục gọi lại request cũ vừa bị lỗi
+
+        if (headers) {
+          return http2.request({
+            ...config,
+            // @ts-ignore
+            headers: { ...headers, authorization: access_token }
+          });
         }
       }
 

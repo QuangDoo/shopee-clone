@@ -21,7 +21,7 @@ function InputV2<
     className,
     inputClassName = 'p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm',
     classNameError = 'mt-1 text-red-600 min-h-[1.25rem] text-sm',
-    value = '',
+    value,
     ...rest
   } = props;
   const { field, fieldState } = useController(props);
@@ -42,7 +42,13 @@ function InputV2<
 
   return (
     <div className={className}>
-      <input className={inputClassName} {...rest} {...field} onChange={handleChange} value={value || localValue} />
+      <input
+        className={inputClassName}
+        {...rest}
+        {...field}
+        onChange={handleChange}
+        value={value === '' ? localValue : value}
+      />
       <div className={classNameError}>{fieldState.error?.message}</div>
     </div>
   );
