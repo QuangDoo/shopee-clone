@@ -1,8 +1,26 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useContext, useEffect } from 'react';
-import { AppContext } from './contexts/app.context';
+import { HelmetProvider } from 'react-helmet-async';
+import { BrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'src/i18n/i18n';
+import { ErrorBoundary } from './component';
+import { AppContext, AppProvider } from './contexts/app.context';
 import { useRouteElements } from './hooks';
+import './index.css';
 import { LocalStorageEventTartget } from './utils';
-import { Helmet, HelmetProvider } from 'react-helmet-async';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 0
+    }
+  }
+});
 
 function App() {
   const routeElements = useRouteElements();
@@ -17,13 +35,17 @@ function App() {
   }, [reset]);
 
   return (
-    <div>
-      <Helmet>
-        <title>Hello World</title>
-        <link rel='canonical' href='https://www.tacobell.com/' />
-      </Helmet>
-      {routeElements}
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <AppProvider>
+          <ErrorBoundary>
+            {routeElements}
+            <ToastContainer />
+          </ErrorBoundary>
+        </AppProvider>
+      </HelmetProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 
