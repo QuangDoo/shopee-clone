@@ -16,6 +16,7 @@ const Header = () => {
   const { isAuthenticated } = useContext(AppContext);
 
   const { onSubmit, register } = useSearchProducts();
+
   const { data: purchaseInCartData } = useQuery({
     queryKey: ['purchases', { status: purchasesStatus.inCart }],
     queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart }),
